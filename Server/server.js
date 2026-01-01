@@ -9,9 +9,12 @@ import connectDB from './config/db.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import errorHandler from './middlewares/errorHandler.js'
+
 import authRoutes from './routes/authRoute.js'
 import docRoutes from './routes/docRoute.js'
 import FlashcardRoutes from './routes/flashcardRoute.js'
+import aiRoutes from './routes/aiRoute.js'
+import progressRoutes from './routes/progressRoutes.js'
 
 // Connect to Database
 connectDB()
@@ -41,6 +44,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/docs', docRoutes)
 app.use('/api/flashcards', FlashcardRoutes)
+app.use('/api/ai', aiRoutes)
+app.use('/api/progress', progressRoutes)
 
 // Start Server
 app.listen(PORT, () => {

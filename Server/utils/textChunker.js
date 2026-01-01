@@ -99,7 +99,7 @@ export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
 
 // Find Relevent Chunks based on keywords matching
 export const findReleventChunks = (chunks , query , maxChunks = 3) => {
-    if(!query || chunks.trim().length === 0 || !chunks){
+    if(!query || !chunks){
         return []
     }
 
@@ -155,7 +155,7 @@ export const findReleventChunks = (chunks , query , maxChunks = 3) => {
         const normalizedScore = score / Math.sqrt(contentWords);
 
         // 4️⃣ Small bonus for earlier chunks
-        const positionBonus = 1 - (index / chunksLength) * 0.1;
+        const positionBonus = 1 - (index / chunks.length) * 0.1;
 
         // 5️⃣ Final score
         const finalScore = normalizedScore * positionBonus;
