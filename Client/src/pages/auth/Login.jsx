@@ -19,8 +19,9 @@ const Login = () => {
     setLoading(true);
     console.log(data);
     try {
-      const {token , user } = await authService.login(data.email , data.password);
-      login(user , token);
+      const response = await authService.login(data.email , data.password);
+      const { token, data: userData } = response;
+      login(userData.user , token);
       toast.success("Logged in successfully");
       setLoading(false);
       navigate("/dashboard");

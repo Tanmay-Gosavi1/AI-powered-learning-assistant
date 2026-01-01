@@ -74,7 +74,7 @@ const quizSchema = new mongoose.Schema({
     },
     completedAt : {
         type : Date,
-        dafault : null
+        default : null
     }
 },{timestamps: true})
 

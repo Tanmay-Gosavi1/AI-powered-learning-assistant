@@ -33,15 +33,11 @@ export const uploadDoc = async (req, res , next) => {
             fileSize : req.file.size,
             status : 'processing'
         })
-
         processPDF(doc._id , req.file.path).catch((err) => {
             console.error("Error processing PDF: " , err);
         })
-
-        res.status(201).json({success : true , data : doc , message : "Document uploaded successfully", statusCode: 201});  
-        
+        return res.status(201).json({success : true , data : doc , message : "Document uploaded successfully", statusCode: 201});  
     }catch (error) {
-        // Clean up uploaded file in case of error
         if(req.file){
             await fs.unlink(req.file.path).catch(console.error);
         }

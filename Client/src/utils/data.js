@@ -1,8 +1,8 @@
-import { LayoutDashboard , FileText ,Plus , Users} from "lucide-react";
+import { LayoutDashboard , FileText ,Plus , User, BookOpen} from "lucide-react";
 
 export const NAVIGATION_MENU = [
   { id: "dashboard", name: "Dashboard", icon: LayoutDashboard },
-  { id: "invoices", name: "Invoices", icon: FileText },
-  { id: "invoices/new", name: "Create Invoice", icon: Plus },
-  { id: "profile", name: "Profile", icon: Users },
+  { id: "documents", name: "Documents", icon: FileText },
+  { id: "flashcards", name: "Flashcards", icon: BookOpen },
+  { id: "profile", name: "Profile", icon: User },
 ];

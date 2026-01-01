@@ -4,7 +4,7 @@ import Quiz from '../models/Quiz.js';
 
 export const getDashboard = async (req, res, next) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     // Get counts
     const totalDocuments = await Document.countDocuments({ userId });

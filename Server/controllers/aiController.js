@@ -12,7 +12,7 @@ export const generateFlashcards = async (req, res, next) => {
             return res.status(400).json({success: false, error: "Document ID is required", statusCode: 400});
         }
 
-        const document = await Document.findOne({_id: documentId, user: req.user._id , status : 'ready'});
+        const document = await Document.findOne({_id: documentId, userId: req.user.id , status : 'ready'});
 
         if(!document) {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
@@ -53,7 +53,7 @@ export const generateQuiz = async (req, res, next) => {
         if(!documentId) {
             return res.status(400).json({success: false, error: "Document ID is required", statusCode: 400});
         }
-        const document = await Document.findOne({_id: documentId, user: req.user._id , status : 'ready'});
+        const document = await Document.findOne({_id: documentId, userId: req.user.id , status : 'ready'});
 
         if(!document) {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
@@ -93,7 +93,7 @@ export const generateSummary = async (req, res, next) => {
         if(!documentId) {
             return res.status(400).json({success: false, error: "Document ID is required", statusCode: 400});
         }
-        const document = await Document.findOne({_id: documentId, user: req.user._id , status : 'ready'});
+        const document = await Document.findOne({_id: documentId, userId: req.user.id , status : 'ready'});
 
         if(!document) {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
@@ -118,7 +118,7 @@ export const chat = async (req, res, next) => {
         if(!documentId || !question) {
             return res.status(400).json({success: false, error: "Document ID and question are required", statusCode: 400});
         }
-        const document = await Document.findOne({_id: documentId, user: req.user._id , status : 'ready'});
+        const document = await Document.findOne({_id: documentId, userId: req.user.id , status : 'ready'});
 
         if(!document) {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
@@ -180,7 +180,7 @@ export const explainConcept = async (req, res, next) => {
         if(!documentId || !concept) {
             return res.status(400).json({success: false, error: "Document ID and concept are required", statusCode: 400});
         }
-        const document = await Document.findOne({_id: documentId, user: req.user._id , status : 'ready'});
+        const document = await Document.findOne({_id: documentId, userId: req.user.id , status : 'ready'});
 
         if(!document) {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
@@ -208,7 +208,7 @@ export const getChatHistory = async (req, res, next) => {
         }
 
         const chatHistory = await ChatHistory.findOne({
-            userId: req.user._id,
+            userId: req.user.id,
             documentId: documentId
         }).select('messages')
 

@@ -20,7 +20,8 @@ const Signup = () => {
     setErrors(null); // Clear previous errors
     console.log(data);
     try {
-      const {token , user } = await authService.register(data.name, data.email , data.password);
+      const response = await authService.register(data.name, data.email , data.password);
+      const { token, user } = response;
       login(user , token);
       toast.success("Account created successfully");
       navigate("/dashboard");

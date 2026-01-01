@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState , useEffect } from 'react'
-import { Briefcase , Menu , X , LogOut } from 'lucide-react'
+import {   Menu , X , LogOut , Bell, BrainCircuit } from 'lucide-react'
 import {useAuth} from '../../context/AuthContext.jsx'
 import ProfileDropdown from './ProfileDropdown.jsx'
 import { Link , useNavigate} from 'react-router-dom'
@@ -89,9 +89,9 @@ const DashboardLayout = ({children , activeMenu}) => {
          <div className='flex items-center px-6 border-b border-gray-200 h-16'>
             <Link to="/dashboard" className='flex items-center space-x-3'>
                 <div className='w-8 h-8 bg-linear-to-br from-blue-900 to-blue-700 rounded-lg flex justify-center items-center'>
-                  <Briefcase className='h-5 w-5 text-white '/>
+                  <BrainCircuit className='h-5 w-5 text-white '/>
                 </div>
-                {!sidebarCollapsed && <span className='text-xl font-bold text-gray-900'>InvoicelyAI</span>}
+                {!sidebarCollapsed && <span className='text-lg whitespace-nowrap font-bold text-gray-900'>AI Learning Assistant</span>}
             </Link>
          </div> 
 
@@ -110,8 +110,8 @@ const DashboardLayout = ({children , activeMenu}) => {
 
         {/* Logout */}
         <div className='absolute bottom-4 right-4 left-4 '>
-          <button className='w-full cursor-pointer flex items-center px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all duration-200' onClick={logout}>
-            <LogOut className='flex shrink-0 text-gray-600'/>
+          <button className='w-full group cursor-pointer flex items-center px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors duration-250' onClick={logout}>
+            <LogOut className='flex shrink-0 text-gray-600 group-hover:text-red-600 transition-colors duration-250'/>
             {!sidebarCollapsed && <span className='ml-3' onClick={logout}>Logout</span>}
           </button>
         </div>

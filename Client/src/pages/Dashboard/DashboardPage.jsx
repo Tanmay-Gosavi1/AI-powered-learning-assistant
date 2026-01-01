@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState , useEffect } from 'react';
 import progressService from '../../service/progressService.js'
 import { toast } from 'react-hot-toast';
@@ -12,13 +11,13 @@ const DashboardPage = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const data = await progressService.getDashboardData();
+        const data = await progressService.getDashboard();
         console.log("Dashboard data : " , data);
         setDashboardData(data);
       } catch (error) {
         toast.error("Failed to fetch dashboard data");
         console.error("Dashboard fetch error:", error);
-      }
+      } 
       finally{
         setLoading(false);
       }
@@ -90,7 +89,7 @@ const DashboardPage = () => {
                   {stat.label}
                  </span>
                  <div className={`w-11 h-11 rounded-xl bg-linear-to-br ${stat.gradient} shadow-lg ${stat.shadowColor} flex items-center justify-center group-hover:scale-105 transition-transform duration-300`}>
-                  <stat.icon widthStroke={2} className="w-5 h-5 text-white" />
+                  <stat.icon className="w-5 h-5 text-white font-bold" />
                  </div>
               </div>
               <div className='text-3xl font-semibold text-slate-900 tracking-tight'>
@@ -119,12 +118,12 @@ const DashboardPage = () => {
                   timestamp : doc.lastAccessed ,
                   link : `/documents/${doc._id}`
                 })),
-                ...(dashboardData.recentActivity.quizzes || []).map((doc) => ({
-                  id : doc._id,
-                  description : doc.title,
+                ...(dashboardData.recentActivity.quizzes || []).map((quiz) => ({
+                  id : quiz._id,
+                  description : quiz.title,
                   type : 'Quiz',
-                  timestamp : doc.lastAccessed ,
-                  link : `/documents/${doc._id}`
+                  timestamp : quiz.completedAt || quiz.createdAt,
+                  link : `/quiz/${quiz._id}`
                 }))
               ]
               .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))

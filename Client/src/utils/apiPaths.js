@@ -10,11 +10,11 @@ export const API_PATHS = {
   },
 
   DOCUMENTS: {
-    UPLOAD: "/api/documents/upload",
-    GET_DOCUMENTS: "/api/documents",
-    GET_DOCUMENT_BY_ID: (id) => `/api/documents/${id}`,
-    UPDATE_DOCUMENT: (id) => `/api/documents/${id}`,
-    DELETE_DOCUMENT: (id) => `/api/documents/${id}`,
+    UPLOAD: "/api/docs/upload",
+    GET_DOCUMENTS: "/api/docs",
+    GET_DOCUMENT_BY_ID: (id) => `/api/docs/${id}`,
+    UPDATE_DOCUMENT: (id) => `/api/docs/${id}`,
+    DELETE_DOCUMENT: (id) => `/api/docs/${id}`,
   },
 
   AI: {
@@ -41,15 +41,15 @@ export const API_PATHS = {
 
   QUIZZES :{
     GET_QUIZZES_FOR_DOC: (documentId) =>
-      `/api/quizzes/${documentId}`,
+      `/api/quiz/${documentId}`,
     SUBMIT_QUIZ: (quizId) =>
-      `/api/quizzes/${quizId}/submit`,
+      `/api/quiz/${quizId}/submit`,
     GET_QUIZ_BY_ID: (quizId) =>
-      `/api/quizzes/quiz/${quizId}`,
+      `/api/quiz/quiz/${quizId}`,
     GET_QUIZ_RESULTS: (quizId) =>
-      `/api/quizzes/${quizId}/results`,
+      `/api/quiz/${quizId}/results`,
     DELETE_QUIZ: (quizId) =>
-      `/api/quizzes/${quizId}`,
+      `/api/quiz/${quizId}`,
   },
 
   PROGRESS : {
