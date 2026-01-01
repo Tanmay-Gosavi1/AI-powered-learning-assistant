@@ -1,6 +1,5 @@
 // Spilit text into chunks for beeter ai responces
 
-import { raw } from "express";
 
 export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
     if(!text || text.trim().length === 0){

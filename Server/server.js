@@ -14,6 +14,7 @@ import authRoutes from './routes/authRoute.js'
 import docRoutes from './routes/docRoute.js'
 import FlashcardRoutes from './routes/flashcardRoute.js'
 import aiRoutes from './routes/aiRoute.js'
+import quizRoutes from './routes/quizRoute.js'
 import progressRoutes from './routes/progressRoutes.js'
 
 // Connect to Database
@@ -45,6 +46,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/docs', docRoutes)
 app.use('/api/flashcards', FlashcardRoutes)
 app.use('/api/ai', aiRoutes)
+app.use('/api/quiz' , quizRoutes)
 app.use('/api/progress', progressRoutes)
 
 // Start Server

@@ -1,17 +1,17 @@
 import fs from 'fs/promises';
-import {PDFParse} from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
 
 export const extractTextFromPDF = async (filePath) => {
     try {
         const dataBuffer = await fs.readFile(filePath);
-        const parser = new PDFParse(new Uint8Array(dataBuffer))
+        const parser = new PDFParse({ data: new Uint8Array(dataBuffer) });
         
-        const data = await parser.getText();
+        const result = await parser.getText();
 
         return {
-            text: data.text,
-            numPages: data.numpages,
-            info : data.info
+            text: result.text,
+            numPages: result.numpages,
+            info: result.info
         }
     } catch (error) {
         console.error('Error extracting text from PDF:', error);

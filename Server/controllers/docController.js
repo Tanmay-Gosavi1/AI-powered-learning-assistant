@@ -58,7 +58,7 @@ const processPDF = async (docId , filePath) => {
         await Document.findByIdAndUpdate(docId , 
             {
                 extractedText : text,
-                textChunks : chunks,
+                chunks : chunks,
                 status : 'ready'
             }
         )
