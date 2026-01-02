@@ -28,7 +28,16 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 // Middleware
-app.use(helmet())
+// app.use(helmet())
+// Allow embedding by removing X-Frame-Options and setting permissive CSP
+app.use((req, res, next) => {
+  try {
+    res.removeHeader('X-Frame-Options')
+    // Allow any ancestor to frame (adjust for production as needed)
+    res.setHeader('Content-Security-Policy', 'frame-ancestors *')
+  } catch {}
+  next()
+})
 app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
@@ -36,7 +45,13 @@ app.use(express.urlencoded({ extended: true }))
 app.use(errorHandler)
 
 // Sample Route
-app.use('/uploads' , express.static(path.join(__dirname, 'uploads')))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, filePath) => {
+    res.removeHeader('X-Frame-Options')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+  }
+}))
 app.get('/', (req, res) => {
   res.send('Hello, World!')
 })
