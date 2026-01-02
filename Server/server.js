@@ -16,6 +16,7 @@ import FlashcardRoutes from './routes/flashcardRoute.js'
 import aiRoutes from './routes/aiRoute.js'
 import quizRoutes from './routes/quizRoute.js'
 import progressRoutes from './routes/progressRoutes.js'
+import insightRoutes from './routes/insightRoute.js'
 
 // Connect to Database
 connectDB()
@@ -63,6 +64,7 @@ app.use('/api/flashcards', FlashcardRoutes)
 app.use('/api/ai', aiRoutes)
 app.use('/api/quiz' , quizRoutes)
 app.use('/api/progress', progressRoutes)
+app.use('/api/insights', insightRoutes)
 
 // Start Server
 app.listen(PORT, () => {

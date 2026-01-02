@@ -5,6 +5,7 @@ import aiService from "../../service/aiService";
 import toast from "react-hot-toast";
 import MarkdownRenderer from "../common/MarkdownRenderer";
 import Modal from "../common/Modal";
+import insightService from "../../service/insightService";
 
 const AiAction = () => {
     const { id: documentId } = useParams();
@@ -14,6 +15,21 @@ const AiAction = () => {
     const [modalTitle, setModalTitle] = useState("");
     const [concept, setConcept] = useState("");
     const [generatedItems, setGeneratedItems] = useState([]); // {id, type: 'summary'|'explain', title, content}
+    const [editingId, setEditingId] = useState(null);
+    const [editingTitle, setEditingTitle] = useState("");
+
+    // Load persisted insights on mount
+    React.useEffect(() => {
+        const loadInsights = async () => {
+            try {
+                const res = await insightService.getInsightsByDocument(documentId);
+                setGeneratedItems(res.data || []);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        loadInsights();
+    }, [documentId]);
 
     const handleGenerateSummary = async () => {
         setLoadingAction("summary");
@@ -25,7 +41,12 @@ const AiAction = () => {
             setModalContent(summary || "");
             setIsModalOpen(true);
             if (summary) {
-                setGeneratedItems(prev => [{ id: Date.now(), type: 'summary', title, content: summary }, ...prev]);
+                try {
+                    const saved = await insightService.createInsight({ documentId, type: 'summary', title, content: summary });
+                    setGeneratedItems(prev => [saved.data, ...prev]);
+                } catch (err) {
+                    console.error(err);
+                }
             }
         } catch (error) {
             toast.error("Failed to generate summary.");
@@ -51,7 +72,12 @@ const AiAction = () => {
             setIsModalOpen(true);
             setConcept("");
             if (explanation) {
-                setGeneratedItems(prev => [{ id: Date.now(), type: 'explain', title, content: explanation }, ...prev]);
+                try {
+                    const saved = await insightService.createInsight({ documentId, type: 'explain', title, content: explanation });
+                    setGeneratedItems(prev => [saved.data, ...prev]);
+                } catch (err) {
+                    console.error(err);
+                }
             }
         }catch(error){
             toast.error("Failed to explain concept.");
@@ -157,25 +183,74 @@ const AiAction = () => {
                             <h4 className="font-semibold text-slate-900">History</h4>
                         </div>
                         <div className="space-y-2 ">
-                            {generatedItems.map(item => (
-                                <button
-                                    key={item.id}
-                                    onClick={() => { setModalTitle(item.title); setModalContent(item.content); setIsModalOpen(true); }}
-                                    className="w-full cursor-pointer text-left flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200/60 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.type === 'summary' ? 'bg-linear-to-br from-blue-100 to-cyan-100' : 'bg-linear-to-br from-amber-100 to-orange-100'}`}>
-                                            {item.type === 'summary' ? (
-                                                <BookOpen className="w-4 h-4 text-blue-700" />
+                            {generatedItems.map(item => {
+                                const key = item._id || item.id;
+                                const isEditing = editingId === key;
+                                return (
+                                    <div
+                                        key={key}
+                                        role="button"
+                                        tabIndex={0}
+                                        onClick={() => {
+                                            if (isEditing) return; // do not open modal while editing
+                                            setModalTitle(item.title);
+                                            setModalContent(item.content);
+                                            setIsModalOpen(true);
+                                        }}
+                                        className="w-full cursor-pointer text-left flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200/60 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.type === 'summary' ? 'bg-linear-to-br from-blue-100 to-cyan-100' : 'bg-linear-to-br from-amber-100 to-orange-100'}`}>
+                                                {item.type === 'summary' ? (
+                                                    <BookOpen className="w-4 h-4 text-blue-700" />
+                                                ) : (
+                                                    <Lightbulb className="w-4 h-4 text-amber-600" />
+                                                )}
+                                            </div>
+                                            {isEditing ? (
+                                                <input
+                                                    value={editingTitle}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    onChange={(e) => setEditingTitle(e.target.value)}
+                                                    className="text-sm font-medium text-slate-800 bg-white border border-slate-300 rounded px-2 py-1"
+                                                />
                                             ) : (
-                                                <Lightbulb className="w-4 h-4 text-amber-600" />
+                                                <span className="text-sm font-medium text-slate-800">{item.title}</span>
                                             )}
                                         </div>
-                                        <span className="text-sm font-medium text-slate-800">{item.title}</span>
+                                        {isEditing ? (
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    className="text-xs text-emerald-600 font-semibold transition-all hover:bg-green-200/30 px-2 py-1 rounded duration-200 cursor-pointer"
+                                                    onClick={async (e) => {
+                                                        e.stopPropagation();
+                                                        try {
+                                                            const res = await insightService.updateInsightTitle(key, editingTitle.trim());
+                                                            setGeneratedItems(prev => prev.map(it => (it._id || it.id) === key ? res.data : it));
+                                                            setEditingId(null);
+                                                            setEditingTitle("");
+                                                        } catch (err) {
+                                                            console.error(err);
+                                                        }
+                                                    }}
+                                                >Save</button>
+                                                <button
+                                                    className="text-xs text-slate-500 transition-all hover:bg-red-200/30 px-2 py-1 rounded duration-200 cursor-pointer"
+                                                    onClick={(e) => { e.stopPropagation(); setEditingId(null); setEditingTitle(""); }}
+                                                >Cancel</button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xs text-blue-600 font-semibold transition-all hover:bg-blue-200/30 px-2 py-1 rounded duration-200">View</span>
+                                                <button
+                                                    className="text-xs cursor-pointer hover:font-semibold transition-all hover:bg-slate-200/50 px-2 py-1 rounded duration-200 text-slate-500"
+                                                    onClick={(e) => { e.stopPropagation(); setEditingId(key); setEditingTitle(item.title); }}
+                                                >Edit</button>
+                                            </div>
+                                        )}
                                     </div>
-                                    <span className="text-xs text-blue-600 font-semibold">View</span>
-                                </button>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
