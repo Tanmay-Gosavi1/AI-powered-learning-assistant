@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import PageHeader from "../../components/common/PageHeader";
 import Tab from "../../components/common/Tab";
+import ChatInterface from "../../components/chat/ChatInterface";
+import AiAction from "../../components/ai/AiAction";
 
 const DocumentDetailPage = () => {
   const { id } = useParams();
@@ -43,7 +45,7 @@ const DocumentDetailPage = () => {
   }
 
   const baseUrl =
-    process.env.REACT_APP_API_URL || "http://localhost:8000";
+    import.meta.env.REACT_APP_API_URL ; 
 
   return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
 };
@@ -88,11 +90,11 @@ const renderContent = () => {
   )}
 
   const renderChat = () => {
-    return "renderChat"
+    return <ChatInterface />
   }
 
   const renderAIActions = () => {
-    return "renderAIActions"
+    return <AiAction />
   }
 
   const renderFlashcardsTabs = () => {

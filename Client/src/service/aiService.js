@@ -3,7 +3,7 @@ import { API_PATHS } from '../utils/apiPaths';
 
 const generateFlashcards = async (docId , options) => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AI.GENERATE_FLASHCARDS , { docId , ...options });
+        const response = await axiosInstance.post(API_PATHS.AI.GENERATE_FLASHCARDS , { documentId: docId , ...options });
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'An error occurred while generating flashcards.'  };
@@ -12,7 +12,7 @@ const generateFlashcards = async (docId , options) => {
 
 const generateQuiz = async (docId , options) => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AI.GENERATE_QUIZ , { docId , ...options });
+        const response = await axiosInstance.post(API_PATHS.AI.GENERATE_QUIZ , { documentId: docId , ...options });
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'An error occurred while generating quiz.'  };
@@ -21,7 +21,7 @@ const generateQuiz = async (docId , options) => {
 
 const generateSummary = async (docId) => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AI.GENERATE_SUMMARY , { docId });
+        const response = await axiosInstance.post(API_PATHS.AI.GENERATE_SUMMARY , { documentId: docId });
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'An error occurred while generating summary.'  };
@@ -30,7 +30,7 @@ const generateSummary = async (docId) => {
 
 const chat = async (docId , message) => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AI.CHAT , { docId , message });
+        const response = await axiosInstance.post(API_PATHS.AI.CHAT , { documentId: docId , question: message });
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'An error occurred while chatting with AI.'  };
@@ -39,7 +39,7 @@ const chat = async (docId , message) => {
 
 const explainConcept = async (docId , concept) => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AI.EXPLAIN_CONCEPT , { docId , concept });
+        const response = await axiosInstance.post(API_PATHS.AI.EXPLAIN_CONCEPT , { documentId: docId , concept });
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'An error occurred while explaining the concept.'  };
