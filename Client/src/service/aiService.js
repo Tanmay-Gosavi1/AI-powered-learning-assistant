@@ -67,7 +67,7 @@ const clearChatHistory = async (documentId) => {
 const aiService = {
     generateFlashcards,
     generateQuiz,
-    generateSummary,
+    generateSummary, 
     chat,
     explainConcept,
     getChatHistory,

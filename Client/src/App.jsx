@@ -40,7 +40,7 @@ const App = () => {
           <Route path='/quizzes/:quizId/result' element={<QuizResultPage />} />
         </Route>
 
-        <Route path='*' element={<NotFoundPage />} />
+        <Route path='*' element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

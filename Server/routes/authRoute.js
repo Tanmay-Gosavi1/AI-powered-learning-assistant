@@ -63,6 +63,7 @@ router.post('/login', validate(loginSchema), login)
 // Protected Routes
 router.get('/profile',protect,  getProfile)
 router.put('/profile', protect, updateProfile)
+router.post('/change-password', protect, changePassword)
 router.put('/change-password', protect, changePassword)
 
 export default router ;

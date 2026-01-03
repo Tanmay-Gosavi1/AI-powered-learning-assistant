@@ -5,6 +5,15 @@ dotenv.config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+// Model configuration for different tasks
+const MODELS = {
+  CHAT: 'gemini-2.5-flash-lite',      // For Chat / Q&A
+  FLASHCARDS: 'gemini-2.5-flash',           // For Flashcards generation
+  QUIZ: 'gemini-2.5-flash',                 // For Quiz generation
+  SUMMARY: 'gemini-2.5-flash',              // For Summary generation
+  EXPLAIN: 'gemini-2.5-flash-lite',   // For Concept explanation
+};
+
 if (!process.env.GEMINI_API_KEY) {
   console.error('FATAL ERROR: GEMINI_API_KEY is not set in the environment variables.');
   process.exit(1);
@@ -48,7 +57,7 @@ ${text.substring(0, 15000)}`;
 
   try {
     const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite",
+    model: MODELS.FLASHCARDS,
     contents: prompt,
   });
 
@@ -140,7 +149,7 @@ Content to create quiz from:
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
+      model: MODELS.QUIZ,
       contents: prompt,
     });
 
@@ -204,7 +213,7 @@ ${text.substring(0, 20000)}`;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
+      model: MODELS.SUMMARY,
       contents: prompt,
     });
     const generatedText = response.text;
@@ -291,7 +300,7 @@ PROVIDE A HELPFUL, EDUCATIONAL ANSWER:`;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
+      model: MODELS.CHAT,
       contents: prompt,
     });
     const generatedText = response.text;
@@ -327,7 +336,7 @@ PROVIDE A COMPREHENSIVE EXPLANATION OF "${concept}":`;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
+      model: MODELS.EXPLAIN,
       contents: prompt,
     });
     const generatedText = response.text;
