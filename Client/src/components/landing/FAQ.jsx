@@ -23,11 +23,13 @@ const FAQ = () => {
                         <h1 className='font-medium'>{item.question}</h1>
                         <ChevronDown className={`${isOpen(idx) ? 'rotate-180' : 'rotate-0'} text-gray-600 w-5 transition-transform duration-400 `} />
                     </div>
-                    {isOpen(idx) && (
-                        <div className='w-full mt-4'>
-                            <p className='text-gray-600 font-medium'>{item.answer}</p>
-                        </div>
-                    )}
+                                        <div
+                                            className={`grid transition-all duration-300 ${isOpen(idx) ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+                                        >
+                                            <div className='overflow-hidden w-full mt-4'>
+                                                <p className='text-gray-600 font-medium'>{item.answer}</p>
+                                            </div>
+                                        </div>
                 </div>
             ))}
         </div>

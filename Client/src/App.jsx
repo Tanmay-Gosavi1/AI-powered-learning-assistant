@@ -12,13 +12,14 @@ import QuizResultPage from './pages/Quizzes/QuizResult'
 import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import { useAuth } from './context/AuthContext.jsx'
+import Spinner from './components/common/Spinner.jsx'
 import Landing from './pages/landing/Landing.jsx'
 
 const App = () => {
   const {isAuthenticated , loading} = useAuth();
 
   if (loading) {
-    return <h1>Loading...</h1>
+    return <Spinner fullScreen label="Loading" />
   }
   return (
     <BrowserRouter>

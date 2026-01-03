@@ -1,7 +1,8 @@
 import { useState , useEffect } from 'react';
 import progressService from '../../service/progressService.js'
 import { toast } from 'react-hot-toast';
-import { Clock, TrendingUp, Spline, FileText, BookOpen, BrainCircuit } from 'lucide-react';
+import { Clock, TrendingUp, FileText, BookOpen, BrainCircuit } from 'lucide-react';
+import Spinner from '../../components/common/Spinner.jsx'
 
 const DashboardPage = () => {
   const [dashboardData , setDashboardData] = useState(null);
@@ -26,7 +27,11 @@ const DashboardPage = () => {
   },[])
 
   if(loading){
-    return <Spline />
+    return (
+      <div className='min-h-[85vh] flex items-center justify-center'>
+        <Spinner label='Loading dashboard' />
+      </div>
+    )
   }
   if(!dashboardData || !dashboardData.overview){
     return (

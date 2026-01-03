@@ -3,7 +3,7 @@ import { useState , useEffect } from 'react'
 import {   Menu , X , LogOut , Bell, BrainCircuit } from 'lucide-react'
 import {useAuth} from '../../context/AuthContext.jsx'
 import ProfileDropdown from './ProfileDropdown.jsx'
-import { Link , useNavigate} from 'react-router-dom'
+import { Link , useNavigate, useLocation} from 'react-router-dom'
 import { NAVIGATION_MENU } from '../../utils/data.js'
 
 const NavItem = ({item , isActive , onClick , isCollapsed}) => {
@@ -38,7 +38,19 @@ const DashboardLayout = ({children , activeMenu}) => {
   const [sidebarOpen , setSidebarOpen] = useState(false)
   const [isMobile , setIsMobile] = useState(false)
   const [profileDropdownOpen , setProfileDropdownOpen] = useState(false)
-  const [activeNavItem , setActiveNavItem] = useState(activeMenu || 'dashboard')
+  const location = useLocation()
+
+  const getActiveFromPath = (path) => {
+    const segments = path.split('/').filter(Boolean)
+    const first = segments[0] || 'dashboard'
+    if (first === 'dashboard') return 'dashboard'
+    if (first === 'documents') return 'documents'
+    if (first === 'flashcards') return 'flashcards'
+    if (first === 'profile') return 'profile'
+    return 'dashboard'
+  }
+
+  const [activeNavItem , setActiveNavItem] = useState(() => activeMenu || getActiveFromPath(location.pathname))
 
 
   useEffect(()=>{
@@ -64,6 +76,12 @@ const DashboardLayout = ({children , activeMenu}) => {
     return () => document.removeEventListener('click' , handleClickOutside)
   } , [profileDropdownOpen])
 
+  // Keep active nav in sync with URL (handles refresh and deep links)
+  useEffect(() => {
+    const current = getActiveFromPath(location.pathname)
+    setActiveNavItem(current)
+  }, [location.pathname])
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
   }
@@ -87,7 +105,7 @@ const DashboardLayout = ({children , activeMenu}) => {
 
         {/* Company Logo */}
          <div className='flex items-center px-6 border-b border-gray-200 h-16'>
-            <Link to="/dashboard" className='flex items-center space-x-3'>
+            <Link to="/" className='flex items-center space-x-3'>
                 <div className='w-8 h-8 bg-linear-to-br from-blue-900 to-blue-700 rounded-lg flex justify-center items-center'>
                   <BrainCircuit className='h-5 w-5 text-white '/>
                 </div>

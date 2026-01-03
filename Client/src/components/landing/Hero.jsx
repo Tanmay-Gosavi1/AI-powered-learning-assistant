@@ -6,7 +6,7 @@ const Hero = () => {
     const { isAuthenticated } = useAuth();
   return (
     <section>
-        <div className='min-h-screen pt-18 sm:pt-25'>
+        <div className='min-h-[85vh] sm:min-h-screen pt-18 sm:pt-25'>
             {/* Text */}
             <div className='px-6 sm:px-10 max-w-6xl mx-auto'>
                 <div className='text-center py-5'>
@@ -23,13 +23,13 @@ const Hero = () => {
                     <>
                         <Link to="/signup" className='bg-linear-to-r from-blue-950 to-blue-800 px-6 py-4 rounded-lg text-white font-semibold hover:scale-105 transition-all duration-200'>Get Started for free</Link>
                     </>)}
-                    <Link to='#features' className='px-8 py-3 rounded-lg mt-5 sm:mt-0 border-3 border-black font-bold hover:scale-105 transition-all duration-200'>Learn More</Link>
+                        <a href='#workflow' className='px-8 py-3 rounded-lg mt-5 sm:mt-0 border-3 border-black font-bold hover:scale-105 transition-all duration-200'>Learn More</a>
                 </div>
             </div>
             {/* Img */}
-            <div className='max-w-7xl mt-12  mx-auto overflow-hidden bg-cover px-6 pb-10'>
-                                {/* When the image is in the public/ folder, reference it by root-relative path */}
-                                <img className='w-full shadow-lg rounded-xl' src="/image.png" alt="AI Learning Assistant Hero" />
+            <div className='max-w-7xl mt-6 sm:mt-12 mx-auto overflow-hidden bg-cover px-6 pb-6 sm:pb-10'>
+                {/* When the image is in the public/ folder, reference it by root-relative path */}
+                <img className='w-full shadow-lg rounded-xl' src="/image.png" alt="AI Learning Assistant Hero" />
             </div>
         </div>
     </section>

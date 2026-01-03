@@ -10,9 +10,14 @@
 @layer base {
     html {
         font-family: var(--font-display);
+        scroll-behavior: smooth;
     }
     body{
         background-color: #fcfbfc;
         overflow-x: hidden ;
+    }
+    /* Ensure sections don't hide under fixed header */
+    section[id] {
+        scroll-margin-top: 5rem;
     }
 }

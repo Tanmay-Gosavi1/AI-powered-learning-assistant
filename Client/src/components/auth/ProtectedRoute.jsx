@@ -1,11 +1,9 @@
 import React from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-// import {useAuth } from '../../context/AuthContext.jsx'
+import {useAuth } from '../../context/AuthContext.jsx'
 import AppLayout from '../layout/AppLayout.jsx'
 const ProtectedRoute = () => {
-  // const {isAuthenticated , loading} = useAuth();
-  const isAuthenticated = true; // Temporary hardcoded value for testing
-  const loading = false; // Temporary hardcoded value for testing
+  const {isAuthenticated , loading} = useAuth();
   if (loading) {
     return <div>Loading..</div>
   }

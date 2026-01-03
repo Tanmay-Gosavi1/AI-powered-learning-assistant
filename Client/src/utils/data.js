@@ -37,14 +37,14 @@ export const TESTIMONIALS = [
   {
     quote: "I study in half the time and remember more.",
     author: "Ayesha K.",
-    title: "CS Student",
+    title: "Gate Aspirant",
     avatar: "https://placehold.co/100x100/000000/ffffff?text=AK"
   },
   {
     quote: "It turns my messy notes into perfect flashcards.",
-    author: "Amisha B.",
+    author: "Amisha G.",
     title: "MBA Candidate",
-    avatar: "https://placehold.co/100x100/000000/ffffff?text=DR"
+    avatar: "https://placehold.co/100x100/000000/ffffff?text=AG"
   },
   {
     quote: "The AI explanations saved me before exams—so good!",

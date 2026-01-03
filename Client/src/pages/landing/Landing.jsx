@@ -5,6 +5,7 @@ import Features from '../../components/landing/Features.jsx';
 import Testinomials from '../../components/landing/Testinomials.jsx';
 import FAQ from '../../components/landing/FAQ.jsx';
 import Footer from '../../components/landing/Footer.jsx';
+import Workflow from '../../components/landing/Workflow.jsx';
 const Landing = () => {
   return ( <>
     <Header />
@@ -13,6 +14,8 @@ const Landing = () => {
       <Hero />
       {/* Features Section */}
       <Features />
+      {/* Workflow Section */}
+      <Workflow />
       {/* Testimonials Section */}
       <Testinomials />
       <FAQ />
