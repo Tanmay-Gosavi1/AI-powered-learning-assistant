@@ -7,7 +7,7 @@ import * as geminiService from '../utils/geminiService.js';
 
 export const generateFlashcards = async (req, res, next) => {
     try {
-        const { documentId, count=10 } = req.body;
+        const { documentId, count=10, mode='overwrite' } = req.body;
         if(!documentId) {
             return res.status(400).json({success: false, error: "Document ID is required", statusCode: 400});
         }
@@ -23,23 +23,34 @@ export const generateFlashcards = async (req, res, next) => {
         parseInt(count)
         );
 
-        // Save to database
-        const flashcardSet = await Flashcard.create({
-        userId: req.user.id,
-        documentId: document._id,
-        cards: cards.map(card => ({
+        const mapped = cards.map(card => ({
             question: card.question,
             answer: card.answer,
             difficulty: card.difficulty,
             reviewCount: 0,
             isStarred: false
-        }))
-        });
+        }));
 
-        res.status(201).json({
-        success: true,
-        data: flashcardSet,
-        message: 'Flashcards generated successfully'
+        let flashcardSet;
+        if (mode === 'append') {
+            flashcardSet = await Flashcard.findOneAndUpdate(
+                { userId: req.user.id, documentId: document._id },
+                { $push: { cards: { $each: mapped } }, $set: { updatedAt: new Date() } },
+                { new: true, upsert: true }
+            );
+        } else {
+            // overwrite (default)
+            flashcardSet = await Flashcard.findOneAndUpdate(
+                { userId: req.user.id, documentId: document._id },
+                { $set: { cards: mapped, updatedAt: new Date() } },
+                { new: true, upsert: true }
+            );
+        }
+
+        res.status(200).json({
+            success: true,
+            data: flashcardSet,
+            message: mode === 'append' ? 'Flashcards appended successfully' : 'Flashcards generated successfully'
         });        
     } catch (error) {
         next(error);
@@ -113,7 +124,7 @@ export const generateSummary = async (req, res, next) => {
 
 export const chat = async (req, res, next) => {
     try {
-        const {documentId, question} = req.body;
+        const {documentId, question, mode = 'hybrid'} = req.body;
 
         if(!documentId || !question) {
             return res.status(400).json({success: false, error: "Document ID and question are required", statusCode: 400});
@@ -141,7 +152,7 @@ export const chat = async (req, res, next) => {
             });
         }
 
-        const answer = await geminiService.chatWithContext(question , relevantChunks)
+        const answer = await geminiService.chatWithContext(question, relevantChunks, mode)
 
         chatHistory.messages.push(
             {
@@ -217,6 +228,28 @@ export const getChatHistory = async (req, res, next) => {
         }
         
         res.status(200).json({success: true, data: chatHistory.messages, message: "Chat history fetched successfully", statusCode: 200});
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const clearChatHistory = async (req, res, next) => {
+    try {
+        const { documentId } = req.params;
+        if(!documentId) {
+            return res.status(400).json({success: false, error: "Document ID is required", statusCode: 400});
+        }
+
+        const result = await ChatHistory.findOneAndDelete({
+            userId: req.user.id,
+            documentId: documentId
+        });
+
+        if(!result){
+            return res.status(200).json({success: true, message: "No chat history to clear.", statusCode: 200});
+        }
+        
+        res.status(200).json({success: true, message: "Chat history cleared successfully", statusCode: 200});
     } catch (error) {
         next(error);
     }

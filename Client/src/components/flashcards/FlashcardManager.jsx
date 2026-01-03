@@ -1,4 +1,4 @@
-import React , {useState , useEffect} from 'react'
+import React , {useState , useEffect, useRef} from 'react'
 import {Plus , ChevronLeft , ChevronRight , Trash2 , ArrowLeft , Sparkles , Brain} from 'lucide-react'
 import toast from 'react-hot-toast';
 import moment from 'moment'
@@ -18,6 +18,9 @@ const FlashcardManager = ({documentId}) => {
     const [isDeleteModalOpen , setIsDeleteModalOpen] = useState(false);
     const [deleting , setDeleting] = useState(false);
     const [setToDelete , setSetToDelete] = useState(null);
+    const [isRegenModalOpen , setIsRegenModalOpen] = useState(false);
+    const [wasCardViewed , setWasCardViewed] = useState(false);
+    const flashcardRef = useRef(null);
 
     const fetchFlashcardSets = async () => {
         setLoading(true);
@@ -42,30 +45,52 @@ const FlashcardManager = ({documentId}) => {
         }
     } , [documentId]);
 
-    const handleGenerateFlashcards = async () => {
+    const handleGenerateFlashcards = async (mode, count = 10) => {
         setGenerating(true);
         try{
-            await aiService.generateFlashcards(documentId);
-            toast.success("Flashcards generated successfully.");
+            await aiService.generateFlashcards(documentId, {mode , count });
+            toast.success(mode === 'append' ? 'Added more flashcards.' : 'Flashcards generated successfully.');
             fetchFlashcardSets();
         }catch(error){
-            toast.error("Failed to generate flashcards.");
+            toast.error('Failed to generate flashcards.');
             console.error(error);
         }finally{
             setGenerating(false);
         }
     }
 
+    const openRegenerateConfirm = () => setIsRegenModalOpen(true);
+    const confirmRegenerate = async () => {
+        setIsRegenModalOpen(false);
+        await handleGenerateFlashcards('overwrite');
+    }
+
     const handleNextCard = () => {
         if(selectedSet){
-            handleReview(currentCardIndex)
+            // Only review if the card was actually viewed (flipped)
+            if(wasCardViewed){
+                handleReview(currentCardIndex)
+            }
+            // Reset flip state for next card
+            if(flashcardRef.current){
+                flashcardRef.current.resetFlip()
+            }
+            setWasCardViewed(false)
             setCurrentCardIndex((prevIndex) => (prevIndex + 1) % selectedSet.cards.length);
         }
     }
 
     const handlePrevCard = () => {
         if(selectedSet){
-            handleReview(currentCardIndex)
+            // Only review if the card was actually viewed (flipped)
+            if(wasCardViewed){
+                handleReview(currentCardIndex)
+            }
+            // Reset flip state for next card
+            if(flashcardRef.current){
+                flashcardRef.current.resetFlip()
+            }
+            setWasCardViewed(false)
             setCurrentCardIndex((prevIndex) => (prevIndex - 1 + selectedSet.cards.length) % selectedSet.cards.length);
         }
     }
@@ -83,8 +108,25 @@ const FlashcardManager = ({documentId}) => {
         }
     }
 
-    const handleToggleStar = async (flashcardId) => {
-
+    const handleToggleStar = async (cardId) => {
+        try {
+            await flashcardService.toggleStarFlashcard(cardId);
+            const updatedSets = flashcardSets.map((set) => {
+            if (set._id === selectedSet._id) {
+                const updatedCards = set.cards.map((card) =>
+                card._id === cardId ? { ...card, isStarred: !card.isStarred } : card
+                );
+                return { ...set, cards: updatedCards };
+            }
+            return set;
+            });
+            setFlashcardSets(updatedSets);
+            setSelectedSet(updatedSets.find((set) => set._id === selectedSet._id));
+            toast.success("Flashcard starred status updated!");
+        } catch (error) {
+            toast.error("Failed to update starred status.");
+            console.error(error);
+        }
     }
 
     const handleDeleteRequest = (e , set) => {
@@ -117,6 +159,14 @@ const FlashcardManager = ({documentId}) => {
     const handleSelectSet = (set) => {
         setSelectedSet(set);
         setCurrentCardIndex(0);
+        setWasCardViewed(false);
+    }
+
+    const handleCardFlip = (isFlipped) => {
+        // Mark card as viewed when user flips to see the answer
+        if(isFlipped){
+            setWasCardViewed(true)
+        }
     }
 
     const renderFlashcardViewer = () => {
@@ -124,7 +174,10 @@ const FlashcardManager = ({documentId}) => {
         return (
             <div>
                 <button
-                    onClick={()=>setSelectedSet(null)}
+                    onClick={()=>{
+                        setSelectedSet(null)
+                        setWasCardViewed(false)
+                    }}
                     className='group cursor-pointer inline-flex items-center gap-2 mb-6 text-sm text-slate-600 hover:text-slate-800 font-medium transition-all duration-200'
                 >
                     <ArrowLeft className='w-4 h-4' strokeWidth={2}/>
@@ -135,9 +188,36 @@ const FlashcardManager = ({documentId}) => {
                 <div className='flex flex-col items-center space-y-8'>
                     <div className='w-full max-w-2xl'>
                         <Flashcard 
+                            ref={flashcardRef}
+                            key={currentCard?._id}
                             flashcard={currentCard}
                             onToggleStar={handleToggleStar}
+                            onFlip={handleCardFlip}
                         />
+                    </div>
+
+                    {/* Navigation Controls */}
+                    <div className='flex items-center gap-6'>
+                        <button onClick={handlePrevCard}
+                            className='flex items-center group gap-2 px-5 h-11 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                            disabled={selectedSet.cards.length <= 1}
+                        >   
+                            <ChevronLeft className='w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200' strokeWidth={2.5}/>
+                            Previous
+                        </button>
+
+                        <div className='px-4 py-2 bg-slate-100 border-2 border-slate-200/70 rounded-md'>
+                            <span className='text-sm font-semibold text-slate-700 whitespace-nowrap'>
+                                {currentCardIndex + 1}{" "}
+                                <span className='text-slate-400 font-normal'>/</span>{" "}
+                                {selectedSet.cards.length}
+                            </span>
+                        </div>
+                        <button onClick={handleNextCard}
+                            disabled={selectedSet.cards.length <= 1}
+                            className='flex items-center group gap-2 px-5 h-11 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                        >
+                            Next <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' strokeWidth={2.5}/></button>
                     </div>
                 </div>
             </div>
@@ -167,7 +247,7 @@ const FlashcardManager = ({documentId}) => {
                         Generate flashcards from your document to start learning and reinforce your knowledge.
                     </p>
                     <button
-                        onClick={handleGenerateFlashcards}
+                        onClick={() => handleGenerateFlashcards('overwrite')}
                         disabled={generating}
                         className='group inline-flex items-center gap-2 px-6 h-12 btn-primary cursor-pointer text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-primary-25 active:scale-105'
                     >
@@ -200,23 +280,41 @@ const FlashcardManager = ({documentId}) => {
                             {sets.length === 1 ? "set" : "sets"} available
                         </p>
                     </div>
-                    <button
-                        onClick={handleGenerateFlashcards}
-                        disabled={generating}
-                        className='group inline-flex items-center gap-2 px-5 h-11 btn-primary text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-primary-25 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed'
-                    >
-                        {generating ? (
-                            <>
-                                <div className='w-4 h-4 border-2 border-slate-200/50 border-t-white rounded-full animate-spin'/>
-                                Generating...
-                            </>
-                        ) : (
-                            <>
-                                <Plus className='w-4 h-4' />
-                                Generate New Set
-                            </>
-                        )}
-                    </button>
+                    <div className='flex items-center gap-2'>
+                        <button
+                            onClick={openRegenerateConfirm}
+                            disabled={generating}
+                            className='group inline-flex items-center hover:scale-105 cursor-pointer gap-2 px-4 h-11 bg-white text-blue-900 border border-blue-200 hover:bg-blue-50 text-sm font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                        >
+                            {generating ? (
+                                <>
+                                    <div className='w-4 h-4 border-2 border-slate-300/50 border-t-blue-900 rounded-full animate-spin'/>
+                                    Regenerating...
+                                </>
+                            ) : (
+                                <>
+                                    Regenerate
+                                </>
+                            )}
+                        </button>
+                        <button
+                            onClick={() => handleGenerateFlashcards('append', 5)}
+                            disabled={generating}
+                            className='group inline-flex items-center hover:scale-105 cursor-pointer gap-2 px-4 h-11 btn-primary text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-primary-25 disabled:opacity-50 disabled:cursor-not-allowed'
+                        >
+                            {generating ? (
+                                <>
+                                    <div className='w-4 h-4 border-2 border-slate-200/50 border-t-white rounded-full animate-spin'/>
+                                    Adding...
+                                </>
+                            ) : (
+                                <>
+                                    <Plus className='w-4 h-4' />
+                                    Add 5 more
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Flashcard Sets List */}
@@ -225,7 +323,7 @@ const FlashcardManager = ({documentId}) => {
                         <div 
                             key={set._id}
                             onClick={() => handleSelectSet(set)}
-                            className='group relative bg-white/80 backdrop-blur-xl border-2 border-slate-200 hover:border-primary-300 rounded-2xl shadow-md shadow-slate-200/60 p-6 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-primary-25'
+                            className='group relative bg-white/80 backdrop-blur-xl hover:-translate-y-1 border-2 border-slate-200 hover:border-primary-300 rounded-2xl shadow-md shadow-slate-200/60 p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-primary-25'
                         >
                             <button 
                                 onClick={(e)=>handleDeleteRequest(e,set)}
@@ -292,6 +390,31 @@ const FlashcardManager = ({documentId}) => {
                                 Deleting...
                             </span>
                         ) : 'Delete Set'}
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+        <Modal
+            isOpen={isRegenModalOpen}
+            onClose={() => setIsRegenModalOpen(false)}
+            title="Regenerate Flashcards"
+        >
+            <div className='space-y-6'>
+                <p className='text-sm text-slate-600'>
+                    This will overwrite your current flashcards with a new set. Continue?
+                </p>
+                <div className='flex items-center justify-end gap-3 pt-2'>
+                    <button onClick={() => setIsRegenModalOpen(false)} type='button' disabled={generating} className='px-4 cursor-pointer hover:scale-105 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'>
+                        Cancel
+                    </button>
+                    <button onClick={confirmRegenerate} disabled={generating} className='px-4 cursor-pointer hover:scale-105 h-10 btn-primary text-white text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'>
+                        {generating ? (
+                            <span className='flex items-center gap-2'>
+                                <div className='animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white inline-block mr-2' />
+                                Regenerating...
+                            </span>
+                        ) : 'Regenerate'}
                     </button>
                 </div>
             </div>

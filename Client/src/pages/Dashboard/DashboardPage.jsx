@@ -70,6 +70,12 @@ const DashboardPage = () => {
     },
   ];
 
+  const formatTimestamp = (ts) => {
+    if (!ts) return '—';
+    const d = new Date(ts);
+    return isNaN(d.getTime()) ? '—' : d.toLocaleString();
+  };
+
 
   return (
     <div className='min-h-screen'>
@@ -119,15 +125,15 @@ const DashboardPage = () => {
                 ...(dashboardData.recentActivity.documents || []).map((doc) => ({
                   id : doc._id,
                   description : doc.title,
-                  type : 'Document',
-                  timestamp : doc.lastAccessed ,
+                  type : 'document',
+                  timestamp : doc.lastAccessed || doc.updatedAt || doc.createdAt || doc.uploadedAt,
                   link : `/documents/${doc._id}`
                 })),
                 ...(dashboardData.recentActivity.quizzes || []).map((quiz) => ({
                   id : quiz._id,
                   description : quiz.title,
-                  type : 'Quiz',
-                  timestamp : quiz.completedAt || quiz.createdAt,
+                  type : 'quiz',
+                  timestamp : quiz.completedAt || quiz.updatedAt || quiz.createdAt,
                   link : `/quiz/${quiz._id}`
                 }))
               ]
@@ -153,9 +159,7 @@ const DashboardPage = () => {
                         </p>
                       </div>
 
-                      <p className="text-xs text-slate-500 pl-4">
-                        {new Date(activity.timestamp).toLocaleString()}
-                      </p>
+                      <p className="text-xs text-slate-500 pl-4">{formatTimestamp(activity.timestamp)}</p>
                     </div>
 
                     {activity.link && (

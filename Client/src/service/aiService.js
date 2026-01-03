@@ -28,12 +28,12 @@ const generateSummary = async (docId) => {
     }
 }
 
-const chat = async (docId , message) => {
+const chat = async (docId, message, mode = 'hybrid') => {
     try {
-        const response = await axiosInstance.post(API_PATHS.AI.CHAT , { documentId: docId , question: message });
+        const response = await axiosInstance.post(API_PATHS.AI.CHAT, { documentId: docId, question: message, mode });
         return response.data;
     } catch (error) {
-        throw error.response?.data || { message: 'An error occurred while chatting with AI.'  };
+        throw error.response?.data || { message: 'An error occurred while chatting with AI.' };
     }
 }
 
@@ -55,13 +55,23 @@ const getChatHistory = async (documentId) => {
     }
 }
 
+const clearChatHistory = async (documentId) => {
+    try {
+        const response = await axiosInstance.delete(API_PATHS.AI.CLEAR_CHAT_HISTORY(documentId));
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: 'An error occurred while clearing chat history.' };
+    }
+}
+
 const aiService = {
     generateFlashcards,
     generateQuiz,
     generateSummary,
     chat,
     explainConcept,
-    getChatHistory
+    getChatHistory,
+    clearChatHistory
 };
 
 export default aiService;

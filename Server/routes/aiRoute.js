@@ -6,6 +6,7 @@ import {
   chat,
   explainConcept,
   getChatHistory,
+  clearChatHistory,
 } from '../controllers/aiController.js';
 import protect from '../middlewares/auth.js';
 
@@ -19,5 +20,6 @@ router.post('/generate-summary', generateSummary);
 router.post('/chat', chat);
 router.post('/explain-concept', explainConcept);
 router.get('/chat-history/:documentId', getChatHistory);
+router.delete('/chat-history/:documentId', clearChatHistory);
 
 export default router;

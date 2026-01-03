@@ -1,8 +1,9 @@
 import React , {useState , useEffect , useRef} from 'react'
-import {Send  , MessageSquare , Sparkles} from "lucide-react";
+import {Send  , MessageSquare , Sparkles, BookOpen, Globe, Info, Trash2} from "lucide-react";
 import { useParams } from 'react-router-dom';
 import aiService from '../../service/aiService';
 import Spinner from '../common/Spinner';
+import Modal from '../common/Modal';
 import toast from 'react-hot-toast';
 import {useAuth } from '../../context/AuthContext';
 import MarkdownRenderer from '../common/MarkdownRenderer';
@@ -14,10 +15,36 @@ const ChatInterface = () => {
     const [history , setHistory] = useState([]);
     const [loading , setLoading] = useState(false);
     const [initialLoading , setInitialLoading] = useState(true);
+    const [chatMode, setChatMode] = useState('hybrid'); // 'strict' or 'hybrid'
+    const [showModeInfo, setShowModeInfo] = useState(false);
+    const [clearing, setClearing] = useState(false);
+    const [showClearModal, setShowClearModal] = useState(false);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    const handleClearChat = async () => {
+        if(history.length === 0) return;
+        
+        setClearing(true);
+        setShowClearModal(false);
+        try {
+            await aiService.clearChatHistory(documentId);
+            setHistory([]);
+            toast.success("Chat history cleared!");
+        } catch (error) {
+            toast.error("Failed to clear chat history.");
+            console.error(error);
+        } finally {
+            setClearing(false);
+        }
+    }
+
+    const openClearModal = () => {
+        if(history.length === 0) return;
+        setShowClearModal(true);
     }
 
     useEffect(() => {
@@ -53,7 +80,7 @@ const ChatInterface = () => {
         setLoading(true);
 
         try{
-            const response = await aiService.chat(documentId , userMessage.content);
+            const response = await aiService.chat(documentId , userMessage.content, chatMode);
             const assistantMessage = {
                 role : 'assistant',
                 content : response?.data?.answer,
@@ -81,8 +108,8 @@ const ChatInterface = () => {
                         <Sparkles className='w-4 h-4 text-white' strokeWidth={2}/>
                     </div>
                 )}
-                <div className={`max-w-lg p-4 rounded-2xl shadow-sm 
-                    ${isUser ? 'bg-linear-to-r from-blue-500 to-blue-400 text-white rounded-br-md' : 'bg-white border border-slate-200/60 text-slate-800 rounded-bl-md'}
+                <div className={`max-w-lg p-1 sm:p-4 rounded-2xl sm:shadow-sm
+                    ${isUser ? 'bg-linear-to-r from-blue-500 p-2 to-blue-400 text-white rounded-br-md' : 'bg-white sm:border sm:border-slate-200/60 text-slate-800 rounded-bl-md'}
                     `}>
                         {isUser ? (
                             <p className='text-sm leading-relaxed'>{msg.content}</p>
@@ -93,7 +120,7 @@ const ChatInterface = () => {
                         )}
                 </div>
                 {isUser && (
-                    <div className='w-9 h-9 rounded-xl bg-linear-to-br from-slate-200 to-slate-300 flex 
+                    <div className='w-9 h-9 rounded-xl bg-linear-to-br from-slate-200 to-slate-300 hidden sm:flex 
                     items-center justify-center shrink-0 shadow-lg shadow-primary-25 text-slate-700 font-semibold'>
                         {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
@@ -149,25 +176,149 @@ const ChatInterface = () => {
             </div>
         </div>
 
-        {/* Input Area */}
-        <div className='p-5 border-t border-slate-200/60 bg-white/80'>
-            <form onSubmit={handleSendMessage} className='flex items-center gap-3'>
-                <input 
-                    type="text" 
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder='Ask follow-up questions...'
-                    className='w-full px-6 py-4 bg-slate-100/50 text-slate-800 font-medium tracking-normal placeholder-slate-400 border-t border-slate-200/60 rounded-b-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200'
-                    disabled={loading}
-                />
-                <button 
-                    type='submit'
-                    disabled={loading || !message.trim()}
-                    className='shrink-0 w-12 h-12 btn-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary-25 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed transition-all duration-300 disabled:text-black text-white cursor-pointer'>
-                    <Send className='w-5 h-5' strokeWidth={2}/>
-                </button>
-            </form>
+        {/* Input Area with Mode Toggle */}
+        <div className='border-t border-slate-200/60 bg-white/90'>
+            {/* Mode Toggle Row */}
+            <div className='px-4 pt-3 pb-2 flex items-center'>
+                <div className='flex items-center gap-1.5 bg-slate-200 p-1 rounded-full'>
+                    {/* Mode Toggle Pills */}
+                    <button
+                        onClick={() => setChatMode('strict')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border ${
+                            chatMode === 'strict' 
+                                ? 'bg-amber-50 text-amber-700 border-amber-200 shadow-sm' 
+                                : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-100 hover:text-slate-700'
+                        }`}
+                    >
+                        <BookOpen className='w-3 h-3' strokeWidth={2.5}/>
+                        <span>Strict</span>
+                    </button>
+                    
+                    <button
+                        onClick={() => setChatMode('hybrid')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer border ${
+                            chatMode === 'hybrid' 
+                                ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' 
+                                : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-100 hover:text-slate-700'
+                        }`}
+                    >
+                        <Globe className='w-3 h-3' strokeWidth={2.5}/>
+                        <span>Hybrid</span>
+                    </button>
+                </div>
+                
+                {/* Info Tooltip */}
+                <div className='ml-2 relative'>
+                    <button
+                        onClick={() => setShowModeInfo(!showModeInfo)}
+                        onBlur={() => setTimeout(() => setShowModeInfo(false), 150)}
+                        className='p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200 cursor-pointer'
+                    >
+                        <Info className='w-3.5 h-3.5' strokeWidth={2}/>
+                    </button>
+                    
+                    {showModeInfo && (
+                        <div className='absolute left-0 bottom-8 w-64 p-3 bg-white rounded-xl shadow-xl border border-slate-200/60 z-50'>
+                            <div className='space-y-2.5'>
+                                <div className='flex items-start gap-2'>
+                                    <div className='p-1 rounded-md bg-amber-100 shrink-0'>
+                                        <BookOpen className='w-3 h-3 text-amber-700' strokeWidth={2.5}/>
+                                    </div>
+                                    <div>
+                                        <p className='text-[11px] font-semibold text-slate-800'>Strict Mode</p>
+                                        <p className='text-[10px] text-slate-500 leading-relaxed'>Exam-safe! Only answers from your notes.</p>
+                                    </div>
+                                </div>
+                                <div className='flex items-start gap-2'>
+                                    <div className='p-1 rounded-md bg-blue-100 shrink-0'>
+                                        <Globe className='w-3 h-3 text-blue-700' strokeWidth={2.5}/>
+                                    </div>
+                                    <div>
+                                        <p className='text-[11px] font-semibold text-slate-800'>Hybrid Mode</p>
+                                        <p className='text-[10px] text-slate-500 leading-relaxed'>Notes + AI knowledge for deeper learning.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Clear Chat Button */}
+                {history.length > 0 && (
+                    <button
+                        onClick={openClearModal}
+                        disabled={clearing || loading}
+                        className='ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                        {clearing ? (
+                            <div className='w-3 h-3 border-2 border-rose-300 border-t-rose-600 rounded-full animate-spin'/>
+                        ) : (
+                            <Trash2 className='w-3 h-3' strokeWidth={2.5}/>
+                        )}
+                        <span>{clearing ? 'Clearing...' : 'Clear'}</span>
+                    </button>
+                )}
+            </div>
+            
+            {/* Input Row */}
+            <div className='px-4 pb-4'>
+                <form onSubmit={handleSendMessage} className='flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/60 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-300 transition-all duration-200'>
+                    <input 
+                        type="text" 
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder='Ask anything about your document...'
+                        className='flex-1 px-4 py-3 bg-transparent text-slate-800 text-sm font-medium placeholder-slate-400 focus:outline-none'
+                        disabled={loading}
+                    />
+                    <button 
+                        type='submit'
+                        disabled={loading || !message.trim()}
+                        className='shrink-0 w-10 h-10 btn-primary rounded-xl flex items-center justify-center shadow-md disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all duration-200 text-white cursor-pointer hover:scale-105 active:scale-95'>
+                        <Send className='w-4 h-4' strokeWidth={2.5}/>
+                    </button>
+                </form>
+            </div>
         </div>
+
+        {/* Clear Chat Confirmation Modal */}
+        <Modal
+            isOpen={showClearModal}
+            onClose={() => setShowClearModal(false)}
+            title="Clear Chat History"
+        >
+            <div className='space-y-6'>
+                <p className='text-sm text-slate-600'>
+                    Are you sure you want to clear all chat messages? This will permanently delete your conversation history for this document.
+                </p>
+                <div className='flex items-center justify-end gap-3 pt-2'>
+                    <button 
+                        onClick={() => setShowClearModal(false)} 
+                        type='button' 
+                        className='px-4 cursor-pointer hover:scale-105 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-all duration-200'
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        onClick={handleClearChat} 
+                        disabled={clearing}
+                        className='px-4 cursor-pointer hover:scale-105 h-10 bg-rose-500 hover:bg-rose-600 text-white text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+                    >
+                        {clearing ? (
+                            <>
+                                <div className='w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin'/>
+                                Clearing...
+                            </>
+                        ) : (
+                            <>
+                                <Trash2 className='w-4 h-4' strokeWidth={2}/>
+                                Clear Chat
+                            </>
+                        )}
+                    </button>
+                </div>
+            </div>
+        </Modal>
     </div>
   )
 }
