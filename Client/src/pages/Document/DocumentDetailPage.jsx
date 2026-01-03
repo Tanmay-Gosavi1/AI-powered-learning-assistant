@@ -8,6 +8,8 @@ import PageHeader from "../../components/common/PageHeader";
 import Tab from "../../components/common/Tab";
 import ChatInterface from "../../components/chat/ChatInterface";
 import AiAction from "../../components/ai/AiAction";
+import Flashcard from "../../components/flashcards/Flashcard";
+import FlashcardManager from "../../components/flashcards/FlashcardManager";
 
 const DocumentDetailPage = () => {
   const { id } = useParams();
@@ -98,7 +100,7 @@ const renderContent = () => {
   }
 
   const renderFlashcardsTabs = () => {
-    return "renderFlashcards"
+    return <FlashcardManager documentId={id} />
   }
 
   const renderQuizzesTabs = () => {

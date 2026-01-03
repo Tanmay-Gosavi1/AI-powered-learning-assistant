@@ -12,6 +12,7 @@ import QuizResultPage from './pages/Quizzes/QuizResult'
 import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import { useAuth } from './context/AuthContext.jsx'
+import Landing from './pages/landing/Landing.jsx'
 
 const App = () => {
   const {isAuthenticated , loading} = useAuth();
@@ -22,7 +23,8 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={isAuthenticated ? <Navigate to='/dashboard' /> : <Navigate to='/login' />} />
+        {/* <Route path='/' element={isAuthenticated ? <Navigate to='/dashboard' /> : <Landing />} /> */}
+        <Route path='/' element={<Landing />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignupPage />} />
 

@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-const MarkdownRenderer = ({content}) => {
+const MarkdownRenderer = ({ content, codeColor = '#E6E6E6', inlineCodeColor = '#065f46' }) => {
     return (
     <div className="text-neutral-700">
       <ReactMarkdown
@@ -28,12 +28,13 @@ const MarkdownRenderer = ({content}) => {
                 style={dracula}
                 language={match[1]}
                 PreTag="div"
+                customStyle={{ color: codeColor }}
                 {...props}
               >
                 {String(children).replace(/\n$/, '')}
               </SyntaxHighlighter>
             ) : (
-              <code className="rounded p-1 font-mono text-sm" {...props}>
+              <code className="rounded p-1 font-mono text-sm" style={{ color: inlineCodeColor }} {...props}>
                 {children}
               </code>
             );

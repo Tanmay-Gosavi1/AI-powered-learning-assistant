@@ -91,7 +91,7 @@ const DashboardLayout = ({children , activeMenu}) => {
                 <div className='w-8 h-8 bg-linear-to-br from-blue-900 to-blue-700 rounded-lg flex justify-center items-center'>
                   <BrainCircuit className='h-5 w-5 text-white '/>
                 </div>
-                {!sidebarCollapsed && <span className='text-lg whitespace-nowrap font-bold text-gray-900'>AI Learning Assistant</span>}
+                {!sidebarCollapsed && <span className='text-lg whitespace-nowrap font-bold text-gray-900'>PrepMate</span>}
             </Link>
          </div> 
 
@@ -139,7 +139,7 @@ const DashboardLayout = ({children , activeMenu}) => {
             }
             <div className=''>
               <h1 className='text-gray-900 text-base font-semibold'>Welcome back , {user?.name}</h1>
-              <p className='text-gray-500 text-sm hidden sm:block'>Here's your invoice overview.</p>
+              <p className='text-gray-500 text-sm hidden sm:block'>Here’s your learning overview.</p>
             </div>
           </div>
 
