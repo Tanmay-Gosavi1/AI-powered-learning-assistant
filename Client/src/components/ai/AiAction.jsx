@@ -159,7 +159,7 @@ const AiAction = () => {
                                 className="flex-1 h-11 px-4 border-2 border-slate-200/60 rounded-xl bg-slate-100/50 text-slate-900 placeholder-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-amber-200/40 focus:border-amber-400/50"
                                 disabled={loadingAction === "explain"}
                             />
-                            <button className="shrink-0 h-11 px-5 bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-md shadow-green-500/25 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 cursor-pointer" type="submit">
+                            <button className="shrink-0 h-11 px-5 btn-primary text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-md shadow-primary-25 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 cursor-pointer" type="submit">
                                 {loadingAction==='explain' ? (
                                     <span className="flex items-center gap-2">
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
@@ -177,8 +177,8 @@ const AiAction = () => {
                 <div className="p-6 pt-0">
                     <div className="group p-5 bg-linear-to-br from-slate-50/50 to-white rounded-xl border border-slate-200/60 transition-all duration-300 hover:shadow-lg  hover:bg-white">
                         <div className="flex items-center gap-2 mb-3">
-                            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
-                                <Sparkles className="w-4 h-4 text-emerald-600" />
+                            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-blue-100 to-blue-50 flex items-center justify-center">
+                                <Sparkles className="w-4 h-4 text-blue-900" />
                             </div>
                             <h4 className="font-semibold text-slate-900">History</h4>
                         </div>
@@ -221,7 +221,7 @@ const AiAction = () => {
                                         {isEditing ? (
                                             <div className="flex items-center gap-2">
                                                 <button
-                                                    className="text-xs text-emerald-600 font-semibold transition-all hover:bg-green-200/30 px-2 py-1 rounded duration-200 cursor-pointer"
+                                                    className="text-xs text-blue-900 font-semibold transition-all hover:bg-blue-100 px-2 py-1 rounded duration-200 cursor-pointer"
                                                     onClick={async (e) => {
                                                         e.stopPropagation();
                                                         try {

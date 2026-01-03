@@ -10,15 +10,15 @@ const Tab = ({ tabs, activeTab, setActiveTab }) => {
                         key={tab.name}
                         onClick={()=>setActiveTab(tab.name)}
                         className={`pb-4 px-2 relative text-sm font-semibold transition-all duration-200 
-                            ${activeTab === tab.name ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-600 hover:text-slate-900" }    
+                            ${activeTab === tab.name ? "text-blue-900 border-b-2 border-blue-900" : "text-slate-600 hover:text-slate-900" }    
                         `}
                     >
                         <span className='relative z-10'>{tab.label}</span>
                         {activeTab === tab.name && (
-                            <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-emerald-500 to-teal-500 rounded-full' />
+                            <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-blue-500 to-blue-400 rounded-full' />
                         )}
                         {activeTab === tab.name && (
-                            <div className='absolute inset-0 bg-linear-to-b from-emerald-50/50 to-transparent rounded-t-xl'/>
+                            <div className='absolute inset-0 bg-linear-to-b from-blue-50/50 to-transparent rounded-t-xl'/>
                         )}
                     </button>    
                 ))}

@@ -77,12 +77,12 @@ const ChatInterface = () => {
         return (
             <div key={index} className={`flex items-start gap-3 my-4 ${isUser ? 'justify-end' : ''}`}>
                 {!isUser && (
-                    <div className='w-9 hidden sm:flex h-9 rounded-lg bg-linear-to-br from-emerald-500 to-teal-500 items-center justify-center shrink-0 shadow-lg shadow-emerald-500/25'>
+                    <div className='w-9 hidden sm:flex h-9 rounded-lg bg-linear-to-br from-blue-500 to-blue-400 items-center justify-center shrink-0 shadow-lg shadow-primary-25'>
                         <Sparkles className='w-4 h-4 text-white' strokeWidth={2}/>
                     </div>
                 )}
                 <div className={`max-w-lg p-4 rounded-2xl shadow-sm 
-                    ${isUser ? 'bg-linear-to-r from-emerald-500 to-teal-500 text-white rounded-br-md' : 'bg-white border border-slate-200/60 text-slate-800 rounded-bl-md'}
+                    ${isUser ? 'bg-linear-to-r from-blue-500 to-blue-400 text-white rounded-br-md' : 'bg-white border border-slate-200/60 text-slate-800 rounded-bl-md'}
                     `}>
                         {isUser ? (
                             <p className='text-sm leading-relaxed'>{msg.content}</p>
@@ -94,7 +94,7 @@ const ChatInterface = () => {
                 </div>
                 {isUser && (
                     <div className='w-9 h-9 rounded-xl bg-linear-to-br from-slate-200 to-slate-300 flex 
-                    items-center justify-center shrink-0 shadow-lg shadow-emerald-500/10 text-slate-700 font-semibold'>
+                    items-center justify-center shrink-0 shadow-lg shadow-primary-25 text-slate-700 font-semibold'>
                         {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </div>
                 )}
@@ -105,8 +105,8 @@ const ChatInterface = () => {
     if(initialLoading){
         return (
             <div className='flex flex-col h-[70vh] bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl items-center justify-center shadow-xl shadow-slate-200/60'>
-                <div className='w-14 h-14 bg-linear-to-r from-emerald-100 to-teal-100 rounded-xl flex items-center justify-center mb-4'>
-                    <MessageSquare className='w-7 h-7 text-emerald-600' strokeWidth={2}/>
+                <div className='w-14 h-14 bg-linear-to-r from-blue-100 to-blue-50 rounded-xl flex items-center justify-center mb-4'>
+                    <MessageSquare className='w-7 h-7 text-blue-900' strokeWidth={2}/>
                 </div>
                 <Spinner />
                 <p className='text-sm text-slate-500 mt-3 font-medium'>Loading chat...</p>
@@ -121,8 +121,8 @@ const ChatInterface = () => {
         <div className='flex-1 p-6 overflow-y-auto bg-linear-to-br from-slate-50/50 via-white/50 to-slate-50/50'>
             {history.length === 0 ? (
                 <div className='flex flex-col items-center justify-center h-full text-center'>
-                    <div className='w-16 h-16 rounded-2xl bg-linear-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/10'>
-                        <MessageSquare className='w-8 h-8 text-emerald-600' strokeWidth={2}/>
+                    <div className='w-16 h-16 rounded-2xl bg-linear-to-br from-blue-100 to-blue-50 flex items-center justify-center mb-4 shadow-lg shadow-primary-25'>
+                        <MessageSquare className='w-8 h-8 text-blue-900' strokeWidth={2}/>
                     </div>
                     <h3 className='text-base font-semibold text-slate-900 '>Start a conversation</h3>
                     <p className='text-sm text-slate-500 mt-2 font-medium'>Ask me anything about the document.</p>
@@ -134,7 +134,7 @@ const ChatInterface = () => {
             <div ref={messagesEndRef}>
             {loading && (
                 <div className='flex items-center gap-3 my-4'>
-                    <div className='w-9 h-9 rounded-2xl bg-linear-to-br from-emerald-4000 to-teal-500 shadow-lg shadow-emerald-500/25 flex items-center justify-center shrink-0'>
+                    <div className='w-9 h-9 rounded-2xl bg-linear-to-br from-blue-500 to-blue-400 shadow-lg shadow-primary-25 flex items-center justify-center shrink-0'>
                         <Sparkles className='w-5 h-5 text-white animate-spin'/>
                     </div>
                     <div className='flex items-center gap-2 px-4 py-3 rounded-2xl rounded-bl-md bg-white border border-slate-200/60'>
@@ -157,13 +157,13 @@ const ChatInterface = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder='Ask follow-up questions...'
-                    className='w-full px-6 py-4 bg-slate-100/50 text-slate-800 font-medium tracking-normal placeholder-slate-400 border-t border-slate-200/60 rounded-b-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200'
+                    className='w-full px-6 py-4 bg-slate-100/50 text-slate-800 font-medium tracking-normal placeholder-slate-400 border-t border-slate-200/60 rounded-b-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200'
                     disabled={loading}
                 />
                 <button 
                     type='submit'
                     disabled={loading || !message.trim()}
-                    className='shrink-0 w-12 h-12 bg-linear-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-600 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed transition-all duration-300 disabled:text-black text-white cursor-pointer'>
+                    className='shrink-0 w-12 h-12 btn-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary-25 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed transition-all duration-300 disabled:text-black text-white cursor-pointer'>
                     <Send className='w-5 h-5' strokeWidth={2}/>
                 </button>
             </form>

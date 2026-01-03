@@ -65,8 +65,8 @@ const DashboardPage = () => {
       label: 'Total Quizzes',
       value: dashboardData.overview.totalQuizzes,
       icon: BrainCircuit,
-      gradient: 'from-emerald-400 to-teal-500',
-      shadowColor: 'shadow-emerald-500/25',
+      gradient: 'from-blue-500 to-blue-400',
+      shadowColor: 'shadow-primary-25',
     },
   ];
 
@@ -141,8 +141,8 @@ const DashboardPage = () => {
                         <div
                           className={`w-2 h-2 rounded-full ${
                             activity.type === 'document'
-                              ? 'bg-linear-to-r from-blue-400 to-cyan-500'
-                              : 'bg-linear-to-r from-emerald-400 to-teal-500'
+                              ? 'bg-linear-to-r from-blue-500 to-blue-400'
+                              : 'bg-linear-to-r from-blue-500 to-blue-400'
                           }`}
                         />
                         <p className="text-sm font-medium text-slate-900 truncate">
@@ -161,7 +161,7 @@ const DashboardPage = () => {
                     {activity.link && (
                       <a
                         href={activity.link}
-                        className="ml-4 px-4 py-2 text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-300 whitespace-nowrap"
+                        className="ml-4 px-4 py-2 text-xs font-semibold text-blue-900 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-300 whitespace-nowrap"
                       >
                         View
                       </a>

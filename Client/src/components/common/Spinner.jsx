@@ -20,7 +20,7 @@ const Spinner = ({ fullScreen = false, size = 56, label = 'Loading...' }) => {
             <span className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-blue-700 rounded-full" />
             <span className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-cyan-500 rounded-full" />
             <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-indigo-500 rounded-full" />
-            <span className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-emerald-500 rounded-full" />
+            <span className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full" />
           </div>
         </div>
         {label && (

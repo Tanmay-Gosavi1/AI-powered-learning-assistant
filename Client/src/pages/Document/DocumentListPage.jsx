@@ -118,7 +118,7 @@ const DocumentListPage = () => {
       return (
         <div className='flex items-center justify-center min-h-100'>
           <div className='text-center max-w-md'>
-            <div className='inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-linear-to-br from-slate-100 to-slate-200 shadow-lg shadow-slate-200/50 mb-6'>
+            <div className='inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-linear-to-br from-blue-100 to-blue-200 shadow-lg shadow-slate-200/50 mb-6'>
               <FileText 
                 className='w-10 h-10 text-slate-400'
                 strokeWidth={1.5}
@@ -130,7 +130,7 @@ const DocumentListPage = () => {
             <p className='text-sm text-slate-500 mb-6'>
               Get starting by uploading your PDF document to begin learning.
             </p>
-            <button className='inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-emerald-500 to-teal-500 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/50 cursor-pointer hover:scale-105 ' onClick={()=> setIsUploadModalOpen(true)}>
+            <button className='inline-flex items-center gap-2 px-6 py-3 btn-primary text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-primary-25 cursor-pointer hover:scale-105 ' onClick={()=> setIsUploadModalOpen(true)}>
               <Plus className='w-4 h-4' strokeWidth={2.5}/>
               Upload Document
             </button>
@@ -173,6 +173,11 @@ const DocumentListPage = () => {
             </Button>
           )}
         </div>
+        {documents.length > 0 && (
+          <div className='mb-6 rounded-lg bg-blue-50 border border-blue-100 px-4 py-3'>
+            <p className='text-sm font-medium text-blue-900'>Tip: Click a document to open it and use chat, generate flashcards, take quizzes, and track progress.</p>
+          </div>
+        )}
         {renderContent()}
       </div>
 
@@ -209,7 +214,7 @@ const DocumentListPage = () => {
               {/* File Upload */}
               <div className='space-y-2'>
                 <label className='block text-xs font-semibold uppercase text-slate-700 tracking-wide'>Upload PDF</label>
-                <div className='relative border-2 border-dashed border-slate-300 rounded-xl bg-slate-100/50 hover:border-emerald-400 hover:bg-emerald-50/30 transition-all duration-300'>
+                <div className='relative border-2 border-dashed border-slate-300 rounded-xl bg-slate-100/50 hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-300'>
                     <input 
                       id='file-upload'
                       type='file'
@@ -218,23 +223,23 @@ const DocumentListPage = () => {
                       className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10'
                     />
                     <div className='flex flex-col items-center justify-center py-10 px-6'>
-                      <div className='w-14 h-14 rounded-xl bg-linear-to-r from-emerald-100 to-teal-100 flex items-center justify-center mb-6'>
-                        <Upload className='w-7 h-7 text-emerald-600' />
+                      <div className='w-14 h-14 rounded-xl bg-linear-to-r from-blue-100 to-blue-200 flex items-center justify-center mb-6'>
+                        <Upload className='w-7 h-7 text-blue-600' />
                       </div>
                       <p className='text-sm font-medium text-slate-700 mb-1'>
                         {uploadFile ? (
-                          <span className='text-emerald-600'>
+                          <span className='text-blue-900'>
                             {uploadFile.name}
                           </span>
                         ) : (
                           <>
-                            <span className='text-emerald-600'>
+                            <span className='text-blue-700'>
                               Click to upload
                             </span>{" "}or drag and drop
                           </>
                         )}
                       </p>
-                      <p className='text-sm text-slate-500'>PDF upto 10 mb</p>
+                      <p className='text-sm text-slate-500'>PDF up to 10 MB</p>
                     </div>
                 </div>
               </div>
@@ -252,7 +257,7 @@ const DocumentListPage = () => {
                 <button
                   type='submit'
                   disabled={uploading}
-                  className='flex-1 h-11 rounded-xl bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-semibold hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/25 duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 cursor-pointer'
+                  className='flex-1 h-11 rounded-xl btn-primary text-white text-sm font-semibold transition-all shadow-lg shadow-primary-25 duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 cursor-pointer'
                 >
                   {uploading ? (
                     <span className='flex justify-center items-center gap-2'>

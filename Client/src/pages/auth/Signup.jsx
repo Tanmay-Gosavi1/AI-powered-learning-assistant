@@ -49,7 +49,7 @@ const Signup = () => {
           {/* Info */}
           <div className='flex flex-col items-center justify-center mb-3'>
             {/* logo */}
-            <div className='p-3 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 transition-colors'>
+            <div className='p-3 rounded-xl bg-blue-900 text-white hover:bg-blue-800 transition-colors'>
               <BrainIcon />
             </div>
             <h1 className='text-2xl font-bold mt-3 mb-2 '>Create Account</h1>
@@ -121,11 +121,11 @@ const Signup = () => {
               </div>)}
 
               {/* Button */}
-              <button type="submit" disabled={loading} className='w-full bg-linear-to-r from-emerald-600 via-emerald-500 to-emerald-400 text-white font-bold py-3 rounded-lg mt-4 hover:from-emerald-400 hover:via-emerald-400 hover:to-emerald-500 transition-colors duration-300 hover:cursor-pointer shadow-md shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed'>{loading ? "Creating Account..." : "Sign Up"}</button>
+              <button type="submit" disabled={loading} className='w-full btn-primary text-white font-bold py-3 rounded-lg mt-4 transition-colors duration-300 hover:cursor-pointer shadow-md shadow-primary-25 disabled:opacity-50 disabled:cursor-not-allowed'>{loading ? "Creating Account..." : "Sign Up"}</button>
             </div>
           </form>
           <div className='mt-4 flex justify-center items-center text-sm'>
-            <p className='font-medium text-gray-700'>Already have an account?</p><Link to="/login" className='text-emerald-500 hover:text-emerald-700 transition-colors duration-100 font-semibold ml-1'>Sign In</Link>
+            <p className='font-medium text-gray-700'>Already have an account?</p><Link to="/login" className='text-blue-900 hover:text-blue-700 transition-colors duration-100 font-semibold ml-1'>Sign In</Link>
           </div>
         </div>
         {/* p */}

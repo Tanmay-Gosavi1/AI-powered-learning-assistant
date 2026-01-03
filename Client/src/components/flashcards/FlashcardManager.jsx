@@ -157,8 +157,8 @@ const FlashcardManager = ({documentId}) => {
         if(sets.length === 0){
             return (
                 <div className='flex flex-col items-center justify-center py-16 px-6'>
-                    <div className='inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-emerald-100 to-teal-100'>
-                        <Brain className='w-8 h-8 text-emerald-600' strokeWidth={2} />
+                    <div className='inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-blue-100 to-blue-50'>
+                        <Brain className='w-8 h-8 text-blue-900' strokeWidth={2} />
                     </div>
                     <h3 className='text-xl font-semibold text-slate-900 mb-2'>
                         No Flashcards Yet
@@ -169,7 +169,7 @@ const FlashcardManager = ({documentId}) => {
                     <button
                         onClick={handleGenerateFlashcards}
                         disabled={generating}
-                        className='group inline-flex items-center gap-2 px-6 h-12 bg-linear-to-r cursor-pointer from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 active:scale-105'
+                        className='group inline-flex items-center gap-2 px-6 h-12 btn-primary cursor-pointer text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-primary-25 active:scale-105'
                     >
                         {generating ? (
                             <>
@@ -203,7 +203,7 @@ const FlashcardManager = ({documentId}) => {
                     <button
                         onClick={handleGenerateFlashcards}
                         disabled={generating}
-                        className='group inline-flex items-center gap-2 px-5 h-11 bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed'
+                        className='group inline-flex items-center gap-2 px-5 h-11 btn-primary text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-primary-25 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                         {generating ? (
                             <>
@@ -225,7 +225,7 @@ const FlashcardManager = ({documentId}) => {
                         <div 
                             key={set._id}
                             onClick={() => handleSelectSet(set)}
-                            className='group relative bg-white/80 backdrop-blur-xl border-2 border-slate-200 hover:border-emerald-300 rounded-2xl shadow-md shadow-slate-200/60 p-6 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-emerald-200/40'
+                            className='group relative bg-white/80 backdrop-blur-xl border-2 border-slate-200 hover:border-primary-300 rounded-2xl shadow-md shadow-slate-200/60 p-6 cursor-pointer transition-all duration-200 hover:shadow-lg hover:shadow-primary-25'
                         >
                             <button 
                                 onClick={(e)=>handleDeleteRequest(e,set)}
@@ -236,8 +236,8 @@ const FlashcardManager = ({documentId}) => {
 
                             {/* Set Content */}
                             <div className='space-y-4'>
-                                <div className='inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-emerald-100 to-teal-100'>
-                                    <Brain className='w-4 h-4 text-emerald-600' strokeWidth={2} />
+                                <div className='inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-blue-100 to-blue-50'>
+                                    <Brain className='w-4 h-4 text-blue-900' strokeWidth={2} />
                                 </div>
 
                                 <div>
@@ -249,8 +249,8 @@ const FlashcardManager = ({documentId}) => {
                             </div>
 
                             <div className='flex items-center gap-2 pt-2 border-t border-slate-100'>
-                                <div className='px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-lg'>
-                                    <span className='text-sm font-semibold text-emerald-700'>
+                                <div className='px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg'>
+                                    <span className='text-sm font-semibold text-blue-900'>
                                         {set.cards?.length ?? 0}{" "}
                                         {(set.cards?.length ?? 0) === 1 ? "card" : "cards"}
                                     </span>
