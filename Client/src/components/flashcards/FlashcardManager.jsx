@@ -1,5 +1,5 @@
-import React , {useState , useEffect, useRef} from 'react'
-import {Plus , ChevronLeft , ChevronRight , Trash2 , ArrowLeft , Sparkles , Brain} from 'lucide-react'
+import React , {useState , useEffect, useRef, useCallback} from 'react'
+import {Plus , ChevronLeft , ChevronRight , Trash2 , ArrowLeft , Sparkles , Brain, Star, Layers} from 'lucide-react'
 import toast from 'react-hot-toast';
 import moment from 'moment'
 import flashcardService from '../../service/flashcardService';
@@ -22,7 +22,7 @@ const FlashcardManager = ({documentId}) => {
     const [wasCardViewed , setWasCardViewed] = useState(false);
     const flashcardRef = useRef(null);
 
-    const fetchFlashcardSets = async () => {
+    const fetchFlashcardSets = useCallback(async () => {
         setLoading(true);
         try {
             const response = await flashcardService.getFlashcardsForDocument(documentId);
@@ -37,13 +37,13 @@ const FlashcardManager = ({documentId}) => {
         } finally{
             setLoading(false);
         }
-    }
+    }, [documentId])
 
     useEffect(() => {
         if(documentId){
             fetchFlashcardSets();
         }
-    } , [documentId]);
+    } , [documentId, fetchFlashcardSets]);
 
     const handleGenerateFlashcards = async (mode, count = 10) => {
         setGenerating(true);
@@ -96,7 +96,7 @@ const FlashcardManager = ({documentId}) => {
     }
 
     const handleReview = async (index) => {
-        const currentCard = selectedSet?.cards[currentCardIndex]
+        const currentCard = selectedSet?.cards[index]
         if(!currentCard) return ;
 
         try {
@@ -319,43 +319,81 @@ const FlashcardManager = ({documentId}) => {
 
                 {/* Flashcard Sets List */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {sets.map((set) => (
+                    {sets.map((set) => {
+                        const starredCount = set.cards?.filter(c => c.isStarred).length || 0;
+                        const totalCards = set.cards?.length || 0;
+                        const reviewedCount = set.cards?.filter(c => c.lastReviewed || (c.reviewCount ?? 0) > 0).length || 0;
+                        
+                        return (
                         <div 
                             key={set._id}
                             onClick={() => handleSelectSet(set)}
-                            className='group relative bg-white/80 backdrop-blur-xl hover:-translate-y-1 border-2 border-slate-200 hover:border-primary-300 rounded-2xl shadow-md shadow-slate-200/60 p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-primary-25'
+                            className='group relative card-base card-hover hover-glow p-6 cursor-pointer overflow-hidden'
                         >
+                            {/* Background decoration */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-400/10 to-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
+                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-linear-to-tr from-cyan-400/10 to-blue-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
+                            
                             <button 
                                 onClick={(e)=>handleDeleteRequest(e,set)}
-                                className='absolute top-4 right-4 p-2 text-slate-400 cursor-pointer hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100'
+                                className='absolute top-4 right-4 p-2 text-slate-400 cursor-pointer hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 z-10'
                             >
                                 <Trash2 className='w-4 h-4' strokeWidth={2} />
                             </button>
 
                             {/* Set Content */}
-                            <div className='space-y-4'>
-                                <div className='inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-blue-100 to-blue-50'>
-                                    <Brain className='w-4 h-4 text-blue-900' strokeWidth={2} />
+                            <div className='relative space-y-4'>
+                                <div className='flex items-start gap-3'>
+                                    <div className='shrink-0 w-12 h-12 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 group-hover:scale-105 transition-all duration-300'>
+                                        <Brain className='w-6 h-6 text-white' strokeWidth={2} />
+                                    </div>
+                                    <div className='flex-1 min-w-0'>
+                                        <h4 className='text-base font-bold text-slate-800 group-hover:text-blue-900 transition-colors duration-300'>Flashcard Set</h4>
+                                        <p className='text-xs text-blue-500/70 font-medium tracking-wide'>
+                                            Created {moment(set.createdAt).fromNow()}
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <h4 className='text-base mb-1 font-semibold text-slate-900'>Flashcard Set</h4>
-                                    <p className='text-xs text-slate-500 font-medium uppercase tracking-wide'>
-                                        Created {moment(set.createdAt).format("MMM D, YYYY")}
-                                    </p>
+                                {/* Stats Row */}
+                                <div className='flex items-center flex-wrap gap-2 pt-2'>
+                                    <div className='flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200/60 rounded-lg'>
+                                        <Layers className='w-3.5 h-3.5 text-blue-600' strokeWidth={2.5} />
+                                        <span className='text-sm font-semibold text-blue-700'>
+                                            {totalCards} {totalCards === 1 ? 'Card' : 'Cards'}
+                                        </span>
+                                    </div>
+                                    {starredCount > 0 && (
+                                        <div className='flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200/60 rounded-lg'>
+                                            <Star className='w-3.5 h-3.5 text-amber-500' fill='currentColor' strokeWidth={2} />
+                                            <span className='text-sm font-semibold text-amber-700'>
+                                                {starredCount}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {reviewedCount > 0 && (
+                                        <div className='flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-lg'>
+                                            <span className='text-sm font-semibold text-emerald-700'>
+                                                {reviewedCount}/{totalCards} reviewed
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
 
-                            <div className='flex items-center gap-2 pt-2 border-t border-slate-100'>
-                                <div className='px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg'>
-                                    <span className='text-sm font-semibold text-blue-900'>
-                                        {set.cards?.length ?? 0}{" "}
-                                        {(set.cards?.length ?? 0) === 1 ? "card" : "cards"}
-                                    </span>
+                                {/* Study Action */}
+                                <div className='pt-3 mt-2 border-t border-slate-100'>
+                                    <div className='flex items-center justify-between'>
+                                        <span className='text-xs text-slate-500 font-medium'>Click to study</span>
+                                        <div className='flex items-center gap-1 text-blue-600 group-hover:text-blue-700 transition-colors duration-200'>
+                                            <Sparkles className='w-3.5 h-3.5 group-hover:rotate-12 transition-transform duration-300' strokeWidth={2} />
+                                            <span className='text-xs font-semibold'>Start Learning</span>
+                                            <ChevronRight className='w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200' strokeWidth={2.5} />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    )})}
                 </div>
 
             </div>

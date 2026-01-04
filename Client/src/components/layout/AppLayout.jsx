@@ -11,20 +11,23 @@ const NavItem = ({item , isActive , onClick , isCollapsed}) => {
   return (
   <button
     onClick={() => onClick(item.id)}
-    className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 ${
+    className={`group relative w-full flex items-center px-3 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 cursor-pointer ${
       isActive
-        ? "bg-blue-50 text-blue-900 shadow-sm shadow-blue-50"
-        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-    } cursor-pointer`}
+        ? "bg-linear-to-r from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/30"
+        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+    }`}
   >
     <Icon
       className={`h-5 w-5 shrink-0 ${
-        isActive ? "text-blue-900" : "text-gray-500"
+        isActive ? "text-white" : "text-slate-500 group-hover:text-slate-700"
       }`}
     />
 
     {!isCollapsed && (
       <span className="ml-3 truncate">{item.name}</span>
+    )}
+    {isActive && (
+      <span className="absolute inset-0 -z-10 rounded-xl shadow-primary-25" />
     )}
   </button>
 );
@@ -101,12 +104,12 @@ const DashboardLayout = ({children , activeMenu}) => {
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300
         ${isMobile ? sidebarOpen ?  'translate-x-0' : '-translate-x-full' : 'translate-x-0'}
-        ${sidebarCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200`}>
+        ${sidebarCollapsed ? 'w-16' : 'w-64'} glass-panel border-r`}>
 
         {/* Company Logo */}
-         <div className='flex items-center px-6 border-b border-gray-200 h-16'>
+         <div className='flex items-center px-6 border-b border-gray-200/70 h-16'>
             <Link to="/" className='flex items-center space-x-3'>
-                <div className='w-8 h-8 bg-linear-to-br from-blue-900 to-blue-700 rounded-lg flex justify-center items-center'>
+                <div className='w-8 h-8 bg-linear-to-br from-blue-900 to-blue-700 rounded-lg flex justify-center items-center shadow-lg shadow-primary-25'>
                   <BrainCircuit className='h-5 w-5 text-white '/>
                 </div>
                 {!sidebarCollapsed && <span className='text-lg whitespace-nowrap font-bold text-gray-900'>PrepMate</span>}
@@ -128,8 +131,8 @@ const DashboardLayout = ({children , activeMenu}) => {
 
         {/* Logout */}
         <div className='absolute bottom-4 right-4 left-4 '>
-          <button className='w-full group cursor-pointer flex items-center px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors duration-250' onClick={logout}>
-            <LogOut className='flex shrink-0 text-gray-600 group-hover:text-red-600 transition-colors duration-250'/>
+          <button className='w-full group cursor-pointer flex items-center px-3 py-2.5 text-sm font-semibold text-slate-700 rounded-xl hover:bg-rose-50 hover:text-rose-700 transition-colors duration-250' onClick={logout}>
+            <LogOut className='flex shrink-0 text-slate-600 group-hover:text-rose-700 transition-colors duration-250'/>
             {!sidebarCollapsed && <span className='ml-3' onClick={logout}>Logout</span>}
           </button>
         </div>
@@ -145,7 +148,7 @@ const DashboardLayout = ({children , activeMenu}) => {
         ${isMobile ? 'ml-0' : sidebarCollapsed ? 'ml-16' : 'ml-64'}
       `}>
         {/* TopNav */}
-        <header className='bg-white/80 backdrop-blur-sm border-b border-gray-200 h-16 flex items-center justify-between px-6 sticky top-0 z-30'>
+        <header className='glass-panel border-b border-gray-200/70 h-16 flex items-center justify-between px-6 sticky top-0 z-30'>
           <div className='flex items-center space-x-4'>
             {
               isMobile && (
@@ -156,8 +159,8 @@ const DashboardLayout = ({children , activeMenu}) => {
               )
             }
             <div className=''>
-              <h1 className='text-gray-900 text-base font-semibold'>Welcome back , {user?.name}</h1>
-              <p className='text-gray-500 text-sm hidden sm:block'>Here’s your learning overview.</p>
+              <h1 className='text-gray-900 text-lg tracking-wide font-semibold'>Welcome, {user?.name}!</h1>
+              <p className='text-gray-500 text-sm hidden tracking-wide sm:block'>Here’s your learning overview.</p>
             </div>
           </div>
 

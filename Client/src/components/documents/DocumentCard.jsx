@@ -29,8 +29,8 @@ const DocumentCard = ({document , onDelete}) => {
         onDelete(document);
     }
 
-  return (
-    <div className="group relative p-5 bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer hover:-translate-y-1" onClick={handleNavigate}>
+    return (
+        <div className="group relative p-5 card-base card-hover hover-glow rounded-2xl flex flex-col justify-between cursor-pointer" onClick={handleNavigate}>
         <div>
             <div className='flex items-start justify-between gap-3 mb-4'>
                 <div className='shrink-0 w-12 h-12 bg-linear-to-br from-blue-500 to-blue-400 rounded-xl flex items-center justify-center shadow-lg shadow-primary-25 group-hover:scale-110 transition-transform duration-300'>
@@ -79,7 +79,7 @@ const DocumentCard = ({document , onDelete}) => {
             </div>
         </div>
 
-        <div className='absolute inset-0 rounded-2xl bg-linear-to-br from-blue-500/0 to-blue-400/0 group-hover:from-blue-500/5 group-hover:to-blue-400/5 transition-all duration-300 pointer-events-none'/>
+                <div className='absolute inset-0 rounded-2xl bg-linear-to-br from-blue-500/0 to-blue-400/0 group-hover:from-blue-500/5 group-hover:to-blue-400/5 transition-all duration-300 pointer-events-none'/>
     </div>
   )
 }

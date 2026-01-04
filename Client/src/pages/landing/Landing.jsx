@@ -9,7 +9,9 @@ import Workflow from '../../components/landing/Workflow.jsx';
 const Landing = () => {
   return ( <>
     <Header />
-    <main>
+    <main className="relative">
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[14px_14px] opacity-30 pointer-events-none" />
+      <div className="relative">
       {/* Hero Section */}
       <Hero />
       {/* Features Section */}
@@ -20,6 +22,7 @@ const Landing = () => {
       <Testinomials />
       <FAQ />
       <Footer />
+      </div>
     </main>
     </>
   )

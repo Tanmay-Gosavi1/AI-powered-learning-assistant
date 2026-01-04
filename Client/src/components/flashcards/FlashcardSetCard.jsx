@@ -18,8 +18,7 @@ const FlashcardSetCard = ({ flashcardSet }) => {
 
   return (
     <div 
-        // onClick={handleStudyNow}
-        className="group relative bg-linear-to-br from-white via-blue-50/30 to-indigo-50/50 backdrop-blur-xl border border-blue-100 hover:border-blue-300 rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 h-full overflow-hidden"
+        className="group relative card-base card-hover hover-glow p-6 flex flex-col justify-between h-full overflow-hidden"
     >
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-400/10 to-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
@@ -60,7 +59,7 @@ const FlashcardSetCard = ({ flashcardSet }) => {
             </div>
 
             {/* Progress bar */}
-            {totalCards > 0 && (
+            {/* {totalCards > 0 && (
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-slate-500">
@@ -81,7 +80,7 @@ const FlashcardSetCard = ({ flashcardSet }) => {
                         />
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
 
         {/* Study Now */}

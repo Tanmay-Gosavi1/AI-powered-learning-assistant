@@ -94,7 +94,7 @@ const DashboardPage = () => {
         {/* Stats */}
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-5'>
           {stats.map((stat , idx)=>(
-            <div key={idx} className='group relative bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow shadow-slate-200/60 p-6 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-300 hover:-translate-y-1'>
+            <div key={idx} className='group relative card-base card-hover hover-glow p-6'>
               <div className='flex items-center justify-between mb-4'>
                  <span className='text-xs font-semibold text-slate-700 uppercase tracking-wide'>
                   {stat.label}
@@ -111,7 +111,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Recent activity Section */}
-        <div className='bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow shadow-slate-200/60 p-6 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-300 hover:-translate-y-1'>
+        <div className='card-base card-hover hover-glow p-6'>
           <div className='flex items-center gap-3 mb-6'>
             <div className='w-10 h-10 bg-linear-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center'>
               <Clock className='w-5 h-5 text-slate-600'/>
@@ -134,7 +134,7 @@ const DashboardPage = () => {
                   description : quiz.title,
                   type : 'quiz',
                   timestamp : quiz.completedAt || quiz.updatedAt || quiz.createdAt,
-                  link : `/quiz/${quiz._id}`
+                  link : `/quizzes/${quiz._id}`
                 }))
               ]
               .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))

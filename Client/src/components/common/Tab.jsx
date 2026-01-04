@@ -9,7 +9,7 @@ const Tab = ({ tabs, activeTab, setActiveTab }) => {
                     <button
                         key={tab.name}
                         onClick={()=>setActiveTab(tab.name)}
-                        className={`pb-4 px-2 relative text-sm font-semibold transition-all duration-200 
+                        className={`pb-4 px-2 relative text-sm font-semibold transition-all duration-200 cursor-pointer
                             ${activeTab === tab.name ? "text-blue-900 border-b-2 border-blue-900" : "text-slate-600 hover:text-slate-900" }    
                         `}
                     >

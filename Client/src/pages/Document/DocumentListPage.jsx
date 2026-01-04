@@ -159,7 +159,7 @@ const DocumentListPage = () => {
         {/* Header */}
         <div className='flex items-center justify-between mb-10'>
           <div>
-            <h1 className='text-2xl font-medium text-slate-900 tracking-tight mb-2'>
+            <h1 className='text-2xl font-semibold text-slate-900 tracking-tight mb-2'>
               My Documents
             </h1>
             <p className='text-sm text-slate-600'>
