@@ -1,4 +1,5 @@
 import Quiz from '../models/Quiz.js';
+import { updateStudyStreak } from './progressController.js';
 
 export const getQuizzes = async (req, res, next) => {
     try {
@@ -82,6 +83,9 @@ export const submitQuiz = async (req, res, next) => {
         quiz.score = Math.round((correctCount / Math.max(quiz.totalQuestions, 1)) * 100);
         quiz.completedAt = new Date();
         await quiz.save();
+
+        // Update study streak when user completes a quiz
+        await updateStudyStreak(req.user.id);
 
         return res.status(200).json({
             success: true,

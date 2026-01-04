@@ -1,5 +1,6 @@
 import Flashcard from '../models/Flashcard.js';
 import Document from '../models/Document.js';
+import { updateStudyStreak } from './progressController.js';
 
 export const getFlashcards = async (req, res, next) => {
     try {
@@ -46,6 +47,9 @@ export const reviewFlashcard = async (req, res, next) => {
         flashcardSet.cards[cardIndex].lastReviewed = new Date();
         flashcardSet.cards[cardIndex].reviewCount += 1;
         await flashcardSet.save();
+
+        // Update study streak when user reviews a flashcard
+        await updateStudyStreak(req.user.id);
 
         res.status(200).json({success: true, data: flashcardSet, message: "Flashcard reviewed successfully", statusCode: 200});
     } catch (error) {

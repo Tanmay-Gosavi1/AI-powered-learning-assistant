@@ -17,6 +17,14 @@ const userSchema = new mongoose.Schema({
     profileImg : {
         type: String,
         default : null
+    },
+    lastStudyDate : {
+        type: Date,
+        default: null
+    },
+    studyStreak : {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true });    
 
