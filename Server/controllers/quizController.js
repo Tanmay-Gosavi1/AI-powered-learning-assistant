@@ -30,49 +30,71 @@ export const submitQuiz = async (req, res, next) => {
     try {
         const { answers } = req.body;
 
-        if(!Array.isArray(answers)){
-            return res.status(400).json({success : false , error : "Answers must be an array", statusCode: 400})
+        const quiz = await Quiz.findOne({ _id: req.params.id, userId: req.user.id });
+        if (!quiz) {
+            return res.status(404).json({ success: false, error: "Quiz not found", statusCode: 404 });
         }
 
-        const quiz = await Quiz.findOne({ _id : req.params.id , userId : req.user.id });
-        if(!quiz){
-            return res.status(404).json({success : false , error : "Quiz not found", statusCode: 404})
+        // Allow re-submission to support retakes by overwriting prior attempt
+
+        // Normalize incoming answers
+        let normalized = [];
+        if (Array.isArray(answers)) {
+            normalized = answers.map(a => ({
+                questionIndex: a.questionIndex,
+                // Accept either string option or index under selectedAnswer
+                selectedOption: typeof a.selectedAnswer === 'number'
+                    ? (quiz.questions[a.questionIndex]?.options?.[a.selectedAnswer])
+                    : (a.selectedOption ?? a.selectedAnswer)
+            }));
+        } else if (answers && typeof answers === 'object') {
+            // Accept object map of questionId -> optionIndex
+            normalized = Object.entries(answers).map(([questionId, optIndex]) => {
+                const idx = quiz.questions.findIndex(q => q._id.toString() === String(questionId));
+                const selectedOption = idx >= 0 ? quiz.questions[idx]?.options?.[optIndex] : undefined;
+                return { questionIndex: idx, selectedOption };
+            });
         }
 
-        if(quiz.completedAt){
-            return res.status(400).json({success : false , error : "Quiz already submitted", statusCode: 400})
+        if (!Array.isArray(normalized) || normalized.length === 0) {
+            return res.status(400).json({ success: false, error: "Invalid answers payload", statusCode: 400 });
         }
 
-        let correctCount = 0 ;
-        const userAnswers = [] ;
+        let correctCount = 0;
+        const userAnswers = [];
 
-        answers.forEach(answer => {
-            const {questionIndex , selectedAnswer} = answer;
-            if(questionIndex < quiz.questions.length){
-                const question = quiz.questions[questionIndex]
-                const isCorrect = selectedAnswer === quiz.correctAnswer
-
-                if(isCorrect) correctCount++ ;
-
+        normalized.forEach(({ questionIndex, selectedOption }) => {
+            if (typeof questionIndex === 'number' && questionIndex >= 0 && questionIndex < quiz.questions.length) {
+                const question = quiz.questions[questionIndex];
+                const isCorrect = selectedOption === question.correctAnswer;
+                if (isCorrect) correctCount++;
                 userAnswers.push({
-                    questionIndex ,
-                    selectedAnswer,
-                    isCorrect ,
-                    answeredAt : new Date()
-                })
+                    questionId: questionIndex,
+                    selectedOption,
+                    isCorrect,
+                    answeredAt: new Date()
+                });
             }
-        })
+        });
 
-        const score = Math.round((correctCount / quiz.totalQuestion)*100)
+        quiz.userAnswers = userAnswers;
+        quiz.totalQuestions = quiz.questions.length;
+        quiz.score = Math.round((correctCount / Math.max(quiz.totalQuestions, 1)) * 100);
+        quiz.completedAt = new Date();
+        await quiz.save();
 
-        return res.status(200).json({success : true , data : {
-            quizId : quiz._id ,
-            score , 
-            correctCount ,
-            totalQuestion : quiz.totalQuestion ,
-            percentage : score ,
-            userAnswers
-        } , message : "Quiz submitted successfully!!"});
+        return res.status(200).json({
+            success: true,
+            data: {
+                quizId: quiz._id,
+                score: quiz.score,
+                correctCount,
+                totalQuestions: quiz.totalQuestions,
+                percentage: quiz.score,
+                userAnswers
+            },
+            message: "Quiz submitted successfully!!"
+        });
     } catch (error) {
         next(error);
     }
@@ -89,14 +111,14 @@ export const getQuizResults = async (req, res, next) => {
         }
 
         const detailedResults = quiz.questions.map((question, index) => {
-            const userAnswer = quiz.userAnswers.find(ans => ans.questionIndex === index);
-
+            const userAnswer = quiz.userAnswers.find(ans => ans.questionId === index);
+            const selectedOption = userAnswer?.selectedOption ?? null;
             return {
                 question: question.question,
                 questionIndex: index,
-                options : question.options,
+                options: question.options,
                 correctAnswer: question.correctAnswer,
-                selectedAnswer: userAnswer?.selectedAnswer || null,
+                selectedOption,
                 isCorrect: userAnswer?.isCorrect || false,
                 explanation: question.explanation,
             }

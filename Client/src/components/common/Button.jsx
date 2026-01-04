@@ -13,6 +13,7 @@ const Button = ({
         primary : 'btn-primary text-white hover:scale-105 shadow-lg shadow-primary-25 focus:ring-blue-300',
         secondary : 'bg-linear-to-r from-gray-100 via-gray-200 to-gray-300 text-gray-700 hover:from-gray-200 hover:via-gray-300 hover:to-gray-400 focus:ring-gray-300',
         outline : 'bg-transparent border-2 border-gray-300 text-gray-700 hover:bg-gray-100 focus:ring-gray-200',
+        success : 'bg-linear-to-br from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white shadow-lg shadow-yellow-500/25 focus:ring-yellow-300',
     } 
 
     const sizeStyles = {
@@ -24,7 +25,7 @@ const Button = ({
         type={type}
         onClick={onClick}
         disabled={disabled}
-        className={`${basicStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={`${basicStyles} transition-all duration-250 ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         >
         {children}
     </button>

@@ -218,7 +218,7 @@ const ChatInterface = () => {
                     </button>
                     
                     {showModeInfo && (
-                        <div className='absolute left-0 bottom-8 w-64 p-3 bg-white rounded-xl shadow-xl border border-slate-200/60 z-50'>
+                        <div className='absolute left-1/2 right-1/2 bottom-10 translate-x-[-50%] bottom-8 w-64 p-3 bg-white rounded-xl shadow-xl border border-slate-200/60 z-50'>
                             <div className='space-y-2.5'>
                                 <div className='flex items-start gap-2'>
                                     <div className='p-1 rounded-md bg-amber-100 shrink-0'>

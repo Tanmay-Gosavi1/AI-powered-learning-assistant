@@ -16,7 +16,7 @@ import Spinner from './components/common/Spinner.jsx'
 import Landing from './pages/landing/Landing.jsx'
 
 const App = () => {
-  const {isAuthenticated , loading} = useAuth();
+  const {loading} = useAuth();
 
   if (loading) {
     return <Spinner fullScreen label="Loading" />
@@ -37,10 +37,10 @@ const App = () => {
           <Route path='/flashcards' element={<FlashcardListPage />} />
           <Route path='/documents/:id/flashcards' element={<FlashcardPage />} />
           <Route path='/quizzes/:quizId' element={<QuizTakePage />} />
-          <Route path='/quizzes/:quizId/result' element={<QuizResultPage />} />
+          <Route path='/quizzes/:quizId/results' element={<QuizResultPage />} />
         </Route>
 
-        <Route path='*' element={<Navigate to="/" replace />} />
+        {/* <Route path='*' element={<Navigate to="/" replace />} /> */}
       </Routes>
     </BrowserRouter>
   )
