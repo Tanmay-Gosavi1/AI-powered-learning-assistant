@@ -270,7 +270,7 @@ const FlashcardManager = ({documentId}) => {
         return (
             <div className='space-y-6'>
                 {/* Header */}
-                <div className='flex items-center justify-between'>
+                <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
                     <div>
                         <h3 className='text-lg font-semibold text-slate-900'>
                             Your Flashcard Sets
@@ -280,7 +280,7 @@ const FlashcardManager = ({documentId}) => {
                             {sets.length === 1 ? "set" : "sets"} available
                         </p>
                     </div>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex items-center gap-2 flex-wrap'>
                         <button
                             onClick={openRegenerateConfirm}
                             disabled={generating}
@@ -403,7 +403,7 @@ const FlashcardManager = ({documentId}) => {
     }
   return (
     <>
-        <div className='bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-xl shadow-slate-200/60 p-8'>
+        <div className='bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl sm:rounded-3xl shadow-xl shadow-slate-200/60 p-4 sm:p-8 max-w-full overflow-hidden'>
             {selectedSet ? renderFlashcardViewer() : renderSetList()}
         </div>
 

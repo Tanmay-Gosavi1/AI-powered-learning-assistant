@@ -108,7 +108,7 @@ const ChatInterface = () => {
                         <Sparkles className='w-4 h-4 text-white' strokeWidth={2}/>
                     </div>
                 )}
-                <div className={`max-w-lg p-1 sm:p-4 rounded-2xl sm:shadow-sm
+                <div className={`max-w-[85%] sm:max-w-lg p-1 sm:p-4 rounded-2xl sm:shadow-sm
                     ${isUser ? 'bg-linear-to-r from-blue-500 p-2 to-blue-400 text-white rounded-br-md' : 'bg-white sm:border sm:border-slate-200/60 text-slate-800 rounded-bl-md'}
                     `}>
                         {isUser ? (
@@ -143,9 +143,9 @@ const ChatInterface = () => {
 
 
   return (
-    <div className='flex flex-col h-[70vh] bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden'>
+    <div className='flex flex-col h-[70vh] bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden max-w-full'>
         {/* Messages Area */}
-        <div className='flex-1 p-6 overflow-y-auto bg-linear-to-br from-slate-50/50 via-white/50 to-slate-50/50'>
+        <div className='flex-1 p-4 sm:p-6 overflow-y-auto overflow-x-hidden bg-linear-to-br from-slate-50/50 via-white/50 to-slate-50/50'>
             {history.length === 0 ? (
                 <div className='flex flex-col items-center justify-center h-full text-center'>
                     <div className='w-16 h-16 rounded-2xl bg-linear-to-br from-blue-100 to-blue-50 flex items-center justify-center mb-4 shadow-lg shadow-primary-25'>
@@ -179,7 +179,7 @@ const ChatInterface = () => {
         {/* Input Area with Mode Toggle */}
         <div className='border-t border-slate-200/60 bg-white/90'>
             {/* Mode Toggle Row */}
-            <div className='px-4 pt-3 pb-2 flex items-center'>
+            <div className='px-3 sm:px-4 pt-3 pb-2 flex flex-wrap items-center gap-2'>
                 <div className='flex items-center gap-1.5 bg-slate-200 p-1 rounded-full'>
                     {/* Mode Toggle Pills */}
                     <button
@@ -261,7 +261,7 @@ const ChatInterface = () => {
             </div>
             
             {/* Input Row */}
-            <div className='px-4 pb-4'>
+            <div className='px-3 sm:px-4 pb-4'>
                 <form onSubmit={handleSendMessage} className='flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/60 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-300 transition-all duration-200'>
                     <input 
                         type="text" 

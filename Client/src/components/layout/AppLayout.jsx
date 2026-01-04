@@ -180,8 +180,10 @@ const DashboardLayout = ({children , activeMenu}) => {
           </div>
         </header>
 
-        <main className='flex-1 overflow-y-auto px-6 py-2'>
-          {children}
+        <main className='flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-2'>
+          <div className='max-w-full'>
+            {children}
+          </div>
         </main>
       </div>
     </div>

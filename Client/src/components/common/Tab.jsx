@@ -2,14 +2,14 @@ import React from 'react'
 
 const Tab = ({ tabs, activeTab, setActiveTab }) => {
   return (
-    <div className='w-full'>
-        <div className='relative border-b-2 border-slate-100'>
-            <nav className='flex gap-2'>
+    <div className='w-full max-w-full overflow-hidden'>
+        <div className='relative border-b-2 border-slate-100 overflow-x-auto'>
+            <nav className='flex gap-1 sm:gap-2 min-w-max'>
                 {tabs.map((tab) => (
                     <button
                         key={tab.name}
                         onClick={()=>setActiveTab(tab.name)}
-                        className={`pb-4 px-2 relative text-sm font-semibold transition-all duration-200 cursor-pointer
+                        className={`pb-3 sm:pb-4 px-2 sm:px-3 relative text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap
                             ${activeTab === tab.name ? "text-blue-900 border-b-2 border-blue-900" : "text-slate-600 hover:text-slate-900" }    
                         `}
                     >
@@ -25,11 +25,11 @@ const Tab = ({ tabs, activeTab, setActiveTab }) => {
             </nav>
         </div>
 
-        <div className='py-5'>
+        <div className='py-4 sm:py-5 max-w-full overflow-hidden'>
             {tabs.map((tab) => {
                 if(tab.name === activeTab) {
                     return (
-                        <div className='animate-in fade-in duration-300' key={tab.name}>{tab.content}</div>
+                        <div className='animate-in fade-in duration-300 max-w-full' key={tab.name}>{tab.content}</div>
                     )
                 }
                 return null;
