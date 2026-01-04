@@ -39,8 +39,18 @@ app.use((req, res, next) => {
   } catch {}
   next()
 })
-app.use(cors())
-app.use(morgan('dev'))
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.CLIENT_URL 
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions))
+
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(errorHandler)
@@ -68,7 +78,7 @@ app.use('/api/insights', insightRoutes)
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`)
+  console.log(`Server is running on ${process.env.API_URL}`)
 })
 
 process.on('unhandledRejection', (err) => {

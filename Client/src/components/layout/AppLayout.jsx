@@ -55,6 +55,12 @@ const DashboardLayout = ({children , activeMenu}) => {
 
   const [activeNavItem , setActiveNavItem] = useState(() => activeMenu || getActiveFromPath(location.pathname))
 
+  // Keep active nav in sync with URL (handles refresh and deep links)
+  // Using location.pathname in dependency and checking if update needed
+  const currentPath = getActiveFromPath(location.pathname)
+  if (activeNavItem !== currentPath && !activeMenu) {
+    setActiveNavItem(currentPath)
+  }
 
   useEffect(()=>{
     const handleResize = () => {
@@ -78,12 +84,6 @@ const DashboardLayout = ({children , activeMenu}) => {
     document.addEventListener('click' , handleClickOutside)
     return () => document.removeEventListener('click' , handleClickOutside)
   } , [profileDropdownOpen])
-
-  // Keep active nav in sync with URL (handles refresh and deep links)
-  useEffect(() => {
-    const current = getActiveFromPath(location.pathname)
-    setActiveNavItem(current)
-  }, [location.pathname])
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
