@@ -148,27 +148,26 @@ const FlashcardPage = () => {
       const currentCard = selectedSet?.cards[currentCardIndex]
       return (
         <div>
-          {/* Header with back button and delete */}
-          <div className='flex items-center justify-between mb-6'>
-            <button
+          {/* <div className='flex items-center justify-end mb-6'>
+            {/* <button
               onClick={()=>{ setSelectedSet(null);} }
               className='group cursor-pointer inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 font-medium transition-all duration-200'
             >
               <ArrowLeft className='w-4 h-4' strokeWidth={2}/>
               Back to Sets
-            </button>
-            <button 
+            </button> */}
+            {/* <button 
               onClick={()=>setIsDeleteModalOpen(true)} 
               disabled={deleting}
               className='inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-50'
             >
               <Trash2 className='w-4 h-4' strokeWidth={2}/>
               <span className='hidden sm:inline'>Delete Set</span>
-            </button>
-          </div>
+            </button> 
+          </div> */}
 
           <div className='flex flex-col items-center space-y-6 sm:space-y-8'>
-            <div className='w-full max-w-2xl'>
+            <div className='w-full max-w-2xl h-110 flex items-center justify-center'>
               <Flashcard 
                 ref={flashcardRef}
                 key={currentCard?._id}
