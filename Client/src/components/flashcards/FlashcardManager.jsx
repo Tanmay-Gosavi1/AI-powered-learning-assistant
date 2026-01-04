@@ -19,7 +19,6 @@ const FlashcardManager = ({documentId}) => {
     const [deleting , setDeleting] = useState(false);
     const [setToDelete , setSetToDelete] = useState(null);
     const [isRegenModalOpen , setIsRegenModalOpen] = useState(false);
-    const [wasCardViewed , setWasCardViewed] = useState(false);
     const flashcardRef = useRef(null);
 
     const fetchFlashcardSets = useCallback(async () => {
@@ -67,44 +66,21 @@ const FlashcardManager = ({documentId}) => {
 
     const handleNextCard = () => {
         if(selectedSet){
-            // Only review if the card was actually viewed (flipped)
-            if(wasCardViewed){
-                handleReview(currentCardIndex)
-            }
             // Reset flip state for next card
             if(flashcardRef.current){
                 flashcardRef.current.resetFlip()
             }
-            setWasCardViewed(false)
             setCurrentCardIndex((prevIndex) => (prevIndex + 1) % selectedSet.cards.length);
         }
     }
 
     const handlePrevCard = () => {
         if(selectedSet){
-            // Only review if the card was actually viewed (flipped)
-            if(wasCardViewed){
-                handleReview(currentCardIndex)
-            }
             // Reset flip state for next card
             if(flashcardRef.current){
                 flashcardRef.current.resetFlip()
             }
-            setWasCardViewed(false)
             setCurrentCardIndex((prevIndex) => (prevIndex - 1 + selectedSet.cards.length) % selectedSet.cards.length);
-        }
-    }
-
-    const handleReview = async (index) => {
-        const currentCard = selectedSet?.cards[index]
-        if(!currentCard) return ;
-
-        try {
-            await flashcardService.reviewFlashcard(currentCard._id , index)
-            toast.success("Flashcard reviewed!");
-        } catch (error) {
-            toast.error("Failed to review flashcard.");
-            console.error(error);
         }
     }
 
@@ -159,14 +135,6 @@ const FlashcardManager = ({documentId}) => {
     const handleSelectSet = (set) => {
         setSelectedSet(set);
         setCurrentCardIndex(0);
-        setWasCardViewed(false);
-    }
-
-    const handleCardFlip = (isFlipped) => {
-        // Mark card as viewed when user flips to see the answer
-        if(isFlipped){
-            setWasCardViewed(true)
-        }
     }
 
     const renderFlashcardViewer = () => {
@@ -176,7 +144,6 @@ const FlashcardManager = ({documentId}) => {
                 <button
                     onClick={()=>{
                         setSelectedSet(null)
-                        setWasCardViewed(false)
                     }}
                     className='group cursor-pointer inline-flex items-center gap-2 mb-6 text-sm text-slate-600 hover:text-slate-800 font-medium transition-all duration-200'
                 >
@@ -192,7 +159,6 @@ const FlashcardManager = ({documentId}) => {
                             key={currentCard?._id}
                             flashcard={currentCard}
                             onToggleStar={handleToggleStar}
-                            onFlip={handleCardFlip}
                         />
                     </div>
 
@@ -322,7 +288,6 @@ const FlashcardManager = ({documentId}) => {
                     {sets.map((set) => {
                         const starredCount = set.cards?.filter(c => c.isStarred).length || 0;
                         const totalCards = set.cards?.length || 0;
-                        const reviewedCount = set.cards?.filter(c => c.lastReviewed || (c.reviewCount ?? 0) > 0).length || 0;
                         
                         return (
                         <div 
@@ -368,13 +333,6 @@ const FlashcardManager = ({documentId}) => {
                                             <Star className='w-3.5 h-3.5 text-amber-500' fill='currentColor' strokeWidth={2} />
                                             <span className='text-sm font-semibold text-amber-700'>
                                                 {starredCount}
-                                            </span>
-                                        </div>
-                                    )}
-                                    {reviewedCount > 0 && (
-                                        <div className='flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-lg'>
-                                            <span className='text-sm font-semibold text-emerald-700'>
-                                                {reviewedCount}/{totalCards} reviewed
                                             </span>
                                         </div>
                                     )}

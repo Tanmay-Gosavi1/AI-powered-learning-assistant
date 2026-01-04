@@ -19,15 +19,6 @@ const getFlashcardsForDocument = async (documentId) => {
     }
 };
 
-const reviewFlashcard = async (cardId, reviewData) => {
-    try {
-        const response = await axiosInstance.post(API_PATHS.FLASHCARDS.REVIEW_FLASHCARD(cardId), reviewData);
-        return response.data;
-    } catch (error) {
-        throw error.response?.data || { message: 'An error occurred while reviewing flashcard.' };
-    }
-};
-
 const toggleStarFlashcard = async (cardId) => {
     try {
         const response = await axiosInstance.put(API_PATHS.FLASHCARDS.TOGGLE_STAR(cardId));
@@ -49,7 +40,6 @@ const deleteFlashcardSet = async (setId) => {
 const flashcardService = {
     getAllFlashcardSets,
     getFlashcardsForDocument,
-    reviewFlashcard,
     toggleStarFlashcard,
     deleteFlashcardSet
 };

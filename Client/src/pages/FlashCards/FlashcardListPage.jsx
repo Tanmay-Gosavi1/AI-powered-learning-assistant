@@ -181,8 +181,8 @@ const FlashcardsListPage = () => {
     const currentCard = studyModal.cards[currentStudyIndex];
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-        <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={closeStudyModal}>
+        <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={(e)=> e.stopPropagation()}>
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 bg-linear-to-r from-amber-400 to-orange-500">
             <div className="flex items-center gap-3">
@@ -262,7 +262,7 @@ const FlashcardsListPage = () => {
             </button>
             <button
               onClick={() => navigate(`/documents/${studyModal.docId}/flashcards`)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r whitespace-nowrap from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
             >
               <BookOpen className="w-4 h-4" strokeWidth={2} />
               Study Full Set

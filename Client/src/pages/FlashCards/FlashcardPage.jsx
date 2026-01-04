@@ -23,7 +23,6 @@ const FlashcardPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [isRegenModalOpen , setIsRegenModalOpen] = useState(false);
-  const [wasCardViewed , setWasCardViewed] = useState(false);
   const flashcardRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +37,6 @@ const FlashcardPage = () => {
         if(sets.length > 0){
           setSelectedSet(sets[0]);
           setCurrentCardIndex(0);
-          setWasCardViewed(false);
         } else {
           setSelectedSet(null);
         }
@@ -69,7 +67,6 @@ const FlashcardPage = () => {
           if(sets.length > 0){
             setSelectedSet(sets[0]);
             setCurrentCardIndex(0);
-            setWasCardViewed(false);
           }
       }catch(error){
           toast.error('Failed to generate flashcards.');
@@ -80,44 +77,23 @@ const FlashcardPage = () => {
   }
 
     const handleNextCard = () => {
-        if(wasCardViewed){
-          handleReview(currentCardIndex)
-        }
         if(flashcardRef.current){
           flashcardRef.current.resetFlip()
         }
-        setWasCardViewed(false)
         if(selectedSet){
           setCurrentCardIndex((prevIndex) => (prevIndex + 1) % selectedSet.cards.length);
         }
     }
 
     const handlePrevCard = () => {
-            if(wasCardViewed){
-              handleReview(currentCardIndex)
-            }
             if(flashcardRef.current){
               flashcardRef.current.resetFlip()
             }
-            setWasCardViewed(false)
             if(selectedSet){
               setCurrentCardIndex((prevIndex) => (prevIndex - 1 + selectedSet.cards.length) % selectedSet.cards.length);
             }
     }
     
-    const handleReview = async (index) => {
-        const currentCard = selectedSet?.cards[index]
-        if(!currentCard) return ;
-
-        try {
-            await flashcardService.reviewFlashcard(currentCard._id , index)
-            // toast.success("Flashcard reviewed!");
-        } catch (error) {
-            toast.error("Failed to review flashcard.");
-            console.error(error);
-        }
-    }
-
     const handleToggleStar = async (cardId) => {
       try {
           await flashcardService.toggleStarFlashcard(cardId);
@@ -160,7 +136,6 @@ const FlashcardPage = () => {
         setFlashcardSets(sets);
         setSelectedSet(sets[0] || null);
         setCurrentCardIndex(0);
-        setWasCardViewed(false);
       } catch (error) {
         toast.error("Failed to delete flashcard set.");
         console.error(error);
@@ -173,35 +148,46 @@ const FlashcardPage = () => {
       const currentCard = selectedSet?.cards[currentCardIndex]
       return (
         <div>
-          <button
-            onClick={()=>{ setSelectedSet(null); setWasCardViewed(false);} }
-            className='group cursor-pointer inline-flex items-center gap-2 mb-6 text-sm text-slate-600 hover:text-slate-800 font-medium transition-all duration-200'
-          >
-            <ArrowLeft className='w-4 h-4' strokeWidth={2}/>
-            Back to Sets
-          </button>
+          {/* Header with back button and delete */}
+          <div className='flex items-center justify-between mb-6'>
+            <button
+              onClick={()=>{ setSelectedSet(null);} }
+              className='group cursor-pointer inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 font-medium transition-all duration-200'
+            >
+              <ArrowLeft className='w-4 h-4' strokeWidth={2}/>
+              Back to Sets
+            </button>
+            <button 
+              onClick={()=>setIsDeleteModalOpen(true)} 
+              disabled={deleting}
+              className='inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-50'
+            >
+              <Trash2 className='w-4 h-4' strokeWidth={2}/>
+              <span className='hidden sm:inline'>Delete Set</span>
+            </button>
+          </div>
 
-          <div className='flex flex-col items-center space-y-8'>
+          <div className='flex flex-col items-center space-y-6 sm:space-y-8'>
             <div className='w-full max-w-2xl'>
               <Flashcard 
                 ref={flashcardRef}
                 key={currentCard?._id}
                 flashcard={currentCard}
                 onToggleStar={handleToggleStar}
-                onFlip={(isFlipped)=> setWasCardViewed(!!isFlipped)}
               />
             </div>
 
-            <div className='flex items-center gap-6'>
+            {/* Navigation buttons - responsive */}
+            <div className='flex items-center gap-3 sm:gap-6'>
               <button onClick={handlePrevCard}
-                className='flex items-center group gap-2 px-5 h-11 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex items-center group gap-1 sm:gap-2 px-3 sm:px-5 h-10 sm:h-11 bg-slate-100 rounded-lg hover:bg-slate-200 text-slate-700 text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                 disabled={selectedSet?.cards.length <= 1}
               >
                 <ChevronLeft className='w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200' strokeWidth={2.5}/>
-                Previous
+                <span className='hidden sm:inline'>Previous</span>
               </button>
 
-              <div className='px-4 py-2 bg-slate-100 border-2 border-slate-200/70 rounded-md'>
+              <div className='px-3 sm:px-4 py-2 bg-slate-100 border-2 border-slate-200/70 rounded-lg'>
                 <span className='text-sm font-semibold text-slate-700 whitespace-nowrap'>
                   {currentCardIndex + 1} <span className='text-slate-400 font-normal'>/</span> {selectedSet?.cards.length || 0}
                 </span>
@@ -209,9 +195,10 @@ const FlashcardPage = () => {
 
               <button onClick={handleNextCard}
                 disabled={selectedSet?.cards.length <= 1}
-                className='flex items-center group gap-2 px-5 h-11 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex items-center group gap-1 sm:gap-2 px-3 sm:px-5 h-10 sm:h-11 bg-slate-100 rounded-lg hover:bg-slate-200 text-slate-700 text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                Next <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' strokeWidth={2.5}/>
+                <span className='hidden sm:inline'>Next</span>
+                <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-200' strokeWidth={2.5}/>
               </button>
             </div>
           </div>
@@ -272,7 +259,7 @@ const FlashcardPage = () => {
 
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
             {sets.map((set)=>(
-              <div key={set._id} onClick={()=>{setSelectedSet(set); setCurrentCardIndex(0); setWasCardViewed(false);}} className='group relative card-base card-hover hover-glow p-6 cursor-pointer'>
+              <div key={set._id} onClick={()=>{setSelectedSet(set); setCurrentCardIndex(0);}} className='group relative card-base card-hover hover-glow p-6 cursor-pointer'>
                 <button onClick={(e)=>{e.stopPropagation(); setIsDeleteModalOpen(true);}} className='absolute top-4 right-4 p-2 text-slate-400 cursor-pointer hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100'>
                   <Trash2 className='w-4 h-4' strokeWidth={2} />
                 </button>
@@ -307,23 +294,22 @@ const FlashcardPage = () => {
           <ArrowLeft className='w-3.5 h-3.5' strokeWidth={2.5} /> Back to Document
         </Link>
       </div>
-      <PageHeader title="Flashcards">
-        <div className='flex items-center gap-2'>
-          <Button onClick={()=>setIsRegenModalOpen(true)} disabled={generating} className="bg-blue-200">
-            {generating ? 'Regenerating...' : 'Regenerate'}
-          </Button>
-          <Button onClick={()=>handleGenerateFlashcards('append',5)} disabled={generating}>
-            <Plus className='w-4 h-4' strokeWidth={2}/> Add 5 more
-          </Button>
-          {selectedSet && (
-            <Button onClick={()=>setIsDeleteModalOpen(true)} disabled={deleting} variant="outline" className="hover:bg-red-100 hover:text-red-600 hover:border-red-500/50">
-              <Trash2 className='w-4 h-4' strokeWidth={2}/> Delete Set
+      
+      {/* Only show header with buttons when NOT viewing a flashcard */}
+      {!selectedSet && (
+        <PageHeader title="Flashcards">
+          <div className='flex items-center gap-2 flex-wrap'>
+            <Button onClick={()=>setIsRegenModalOpen(true)} disabled={generating} className="bg-blue-200">
+              {generating ? 'Regenerating...' : 'Regenerate'}
             </Button>
-          )}
-        </div>
-      </PageHeader>
+            <Button onClick={()=>handleGenerateFlashcards('append',5)} disabled={generating}>
+              <Plus className='w-4 h-4' strokeWidth={2}/> Add 5 more
+            </Button>
+          </div>
+        </PageHeader>
+      )}
 
-      <div className='card-base p-6 rounded-2xl'>
+      <div className='card-base p-4 sm:p-6 rounded-2xl'>
         {loading ? (
           <div className='flex justify-center items-center py-12'><Spinner /></div>
         ) : selectedSet ? renderFlashcardViewer() : renderSetList()}

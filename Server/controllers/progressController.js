@@ -106,12 +106,10 @@ export const getDashboard = async (req, res, next) => {
     const flashcardSets = await Flashcard.find({ userId });
 
     let totalFlashcards = 0;
-    let reviewedFlashcards = 0;
     let starredFlashcards = 0;
 
     flashcardSets.forEach(set => {
       totalFlashcards += set.cards.length;
-      reviewedFlashcards += set.cards.filter(c => c.reviewCount > 0).length;
       starredFlashcards += set.cards.filter(c => c.isStarred).length;
     });
 
@@ -150,7 +148,6 @@ export const getDashboard = async (req, res, next) => {
             totalFlashcardSets,
             totalQuizzes,
             totalFlashcards,
-            reviewedFlashcards,
             starredFlashcards,
             completedQuizzes,
             averageScore,

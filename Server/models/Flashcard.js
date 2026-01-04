@@ -27,14 +27,6 @@ const flashcardSchema = new mongoose.Schema({
             enum : ['easy', 'medium', 'hard'],
             default : 'medium'
         },
-        lastReviewed : {
-            type : Date,
-            default : null
-        },
-        reviewCount : {
-            type : Number,
-            default : 0
-        },
         isStarred : {
             type : Boolean,
             default : false

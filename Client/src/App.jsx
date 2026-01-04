@@ -5,8 +5,6 @@ import DashboardPage from './pages/Dashboard/DashboardPage'
 import Profile from './pages/Profile/Profile'
 import DocumentsListPage from './pages/Document/DocumentListPage'
 import DocumentDetailPage from './pages/Document/DocumentDetailPage'
-import FlashcardListPage from './pages/Flashcards/FlashcardListPage'
-import FlashcardPage from './pages/Flashcards/FlashcardPage'
 import QuizTakePage from './pages/Quizzes/QuizTakePage'
 import QuizResultPage from './pages/Quizzes/QuizResult'
 import NotFoundPage from './pages/NotFoundPage'
@@ -14,9 +12,11 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import { useAuth } from './context/AuthContext.jsx'
 import Spinner from './components/common/Spinner.jsx'
 import Landing from './pages/landing/Landing.jsx'
+import FlashcardPage from './pages/FlashCards/FlashcardPage.jsx'
+import FlashcardsListPage from './pages/FlashCards/FlashcardListPage.jsx'
 
 const App = () => {
-  const {loading} = useAuth();
+  const { loading} = useAuth();
 
   if (loading) {
     return <Spinner fullScreen label="Loading" />
@@ -34,13 +34,13 @@ const App = () => {
           <Route path='/profile' element={<Profile />} />
           <Route path='/documents' element={<DocumentsListPage />} />
           <Route path='/documents/:id' element={<DocumentDetailPage />} />
-          <Route path='/flashcards' element={<FlashcardListPage />} />
+          <Route path='/flashcards' element={<FlashcardsListPage />} />
           <Route path='/documents/:id/flashcards' element={<FlashcardPage />} />
           <Route path='/quizzes/:quizId' element={<QuizTakePage />} />
           <Route path='/quizzes/:quizId/results' element={<QuizResultPage />} />
         </Route>
 
-        {/* <Route path='*' element={<Navigate to="/" replace />} /> */}
+        <Route path='*' element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

@@ -1,12 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, forwardRef, useImperativeHandle } from 'react'
 import { Star, RotateCcw, Sparkles } from 'lucide-react'
 
-const Flashcard = ({ flashcard, onToggleStar }) => {
+const Flashcard = forwardRef(({ flashcard, onToggleStar, onFlip }, ref) => {
   const [isFlipped, setIsFlipped] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
+  // Expose resetFlip method to parent via ref
+  useImperativeHandle(ref, () => ({
+    resetFlip: () => setIsFlipped(false)
+  }))
+
   const handleFlip = () => {
-    setIsFlipped(!isFlipped)
+    const newFlipped = !isFlipped
+    setIsFlipped(newFlipped)
+    // Call onFlip callback when card is flipped to answer side
+    if (onFlip) {
+      onFlip(newFlipped)
+    }
   }
 
   // Dynamic difficulty colors
@@ -145,6 +155,8 @@ const Flashcard = ({ flashcard, onToggleStar }) => {
       </div>
     </div>
   )
-}
+})
+
+Flashcard.displayName = 'Flashcard'
 
 export default Flashcard
