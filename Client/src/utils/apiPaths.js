@@ -41,7 +41,7 @@ export const API_PATHS = {
 
   QUIZZES :{
     GET_QUIZZES_FOR_DOC: (documentId) =>
-      `/api/quiz/${documentId}`,
+      `/api/quiz/doc/${documentId}`,
     SUBMIT_QUIZ: (quizId) =>
       `/api/quiz/${quizId}/submit`,
     GET_QUIZ_BY_ID: (quizId) =>

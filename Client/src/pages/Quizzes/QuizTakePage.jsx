@@ -33,6 +33,12 @@ const QuizTakePage = () => {
     fetchQuiz();
   }, [quizId]);
 
+  const backToDocument = () => {
+    const docId = quiz?.documentId ;
+    if (docId) return navigate(`/documents/${docId}`)
+    return navigate('/dashboard')
+  }
+
   const handleOptionChange = (questionId , optionIndex) =>{
     setSelectedAnswers((prev) => ({
       ...prev,
@@ -41,7 +47,7 @@ const QuizTakePage = () => {
   }
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < quiz.questions.length - 1) {
+    if (currentQuestionIndex < quiz.questions?.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     }
   };
@@ -90,7 +96,7 @@ const QuizTakePage = () => {
       </div>
     );
 
-  if (!quiz || quiz.questions.length === 0) {
+  if (!quiz || quiz.questions?.length === 0) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="text-center">
@@ -102,30 +108,35 @@ const QuizTakePage = () => {
     );
   }
 
-  const currentQuestion = quiz.questions[currentQuestionIndex];
+  const currentQuestion = quiz.questions?.[currentQuestionIndex];
   const answeredCount = Object.keys(selectedAnswers).length; 
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <button onClick={backToDocument}
+          className='flex items-center gap-2 text-sm font-semibold py-2 cursor-pointer text-blue-800 hover:text-blue-900 hover:scale-105 transition-all duration-150'
+        >
+          <ChevronLeft className='w-3.5 h-3.5' strokeWidth={2.5} /> Back to Document
+      </button>
       <PageHeader
         title={quiz.title || "Take Quiz"}
-        subtitle={`${quiz.questions.length} questions • ${answeredCount} answered`}
+        subtitle={`${quiz.questions?.length} questions • ${answeredCount} answered`}
       />
 
       {/* Progress */}
       <div className="mb-6">
         <div className="flex items-center justify-between text-sm text-slate-600">
           <span>
-            Question {currentQuestionIndex + 1} of {quiz.questions.length}
+            Question {currentQuestionIndex + 1} of {quiz.questions?.length}
           </span>
           <span className="font-medium">
-            {Math.round((answeredCount / quiz.questions.length) * 100)}% complete
+            {Math.round((answeredCount / quiz.questions?.length) * 100)}% complete
           </span>
         </div>
         <div className="mt-2 h-2 rounded-full bg-slate-200 overflow-hidden">
           <div
             className="h-full btn-primary transition-all duration-500"
-            style={{ width: `${(answeredCount / quiz.questions.length) * 100}%` }}
+            style={{ width: `${(answeredCount / quiz.questions?.length) * 100}%` }}
           />
         </div>
       </div>
@@ -141,12 +152,12 @@ const QuizTakePage = () => {
 
         <div className="p-5 sm:p-6">
           <h3 className="text-lg sm:text-xl font-semibold text-slate-900 tracking-tight mb-4">
-            {currentQuestion.question}
+            {currentQuestion?.question}
           </h3>
 
           {/* Options */}
           <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => {
+            {currentQuestion?.options.map((option, index) => {
               const isSelected = selectedAnswers[currentQuestion._id] === index;
               return (
                 <label
@@ -202,7 +213,7 @@ const QuizTakePage = () => {
             Previous
           </Button>
 
-          {currentQuestionIndex === quiz.questions.length - 1 ? (
+          {currentQuestionIndex === quiz.questions?.length - 1 ? (
             <Button onClick={handleSubmitQuiz} disabled={submitting} className="gap-2">
               {submitting ? (
                 <>Submitting...</>
@@ -221,34 +232,38 @@ const QuizTakePage = () => {
           )}
         </div>
 
-        {/* Question quick nav */}
-        <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-2 justify-end">
-            {quiz.questions.map((q, index) => {
-              const isAnsweredQuestion = Object.prototype.hasOwnProperty.call(
-                selectedAnswers,
-                q._id
-              );
-              const isCurrent = index === currentQuestionIndex;
+        {/* Question quick nav - sticky horizontal bar */}
+        <div className="w-full">
+          <div className="sticky bottom-0 z-10  backdrop-blur-sm border-t border-slate-200">
+            <div className="px-3 py-2">
+              <div className="flex items-center justify-center gap-2 flex-wrap md:flex-nowrap md:overflow-x-auto">
+                {quiz.questions?.map((q, index) => {
+                  const isAnsweredQuestion = Object.prototype.hasOwnProperty.call(
+                    selectedAnswers,
+                    q._id
+                  );
+                  const isCurrent = index === currentQuestionIndex;
 
-              return (
-                <button
-                  key={q._id || index}
-                  onClick={() => setCurrentQuestionIndex(index)}
-                  disabled={submitting}
-                  className={`h-9 w-9 rounded-lg text-sm font-semibold transition-all duration-300 border ${
-                    isCurrent
-                      ? "btn-primary text-white border-transparent shadow-primary-25"
-                      : isAnsweredQuestion
-                      ? "border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
-                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                  }`}
-                  title={isAnsweredQuestion ? "Answered" : "Unanswered"}
-                >
-                  {index + 1}
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={q._id || index}
+                      onClick={() => setCurrentQuestionIndex(index)}
+                      disabled={submitting}
+                      className={`h-9 w-9 shrink-0 rounded-lg text-sm font-semibold transition-all duration-300 border ${
+                        isCurrent
+                          ? "btn-primary text-white border-transparent shadow-primary-25"
+                          : isAnsweredQuestion
+                          ? "border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
+                          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                      }`}
+                      title={isAnsweredQuestion ? "Answered" : "Unanswered"}
+                    >
+                      {index + 1}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
