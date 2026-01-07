@@ -40,18 +40,18 @@ const DocumentDetailPage = () => {
     if(!document?.data?.filePath) return null;
     const filePath = document.data.filePath;
 
+    // If it's already a full URL (including Cloudinary URLs), return as-is
     if (
-    filePath.startsWith("http://") ||
-    filePath.startsWith("https://")
-  ) {
-    return filePath;
-  }
+      filePath.startsWith("http://") ||
+      filePath.startsWith("https://")
+    ) {
+      return filePath;
+    }
 
-  const baseUrl =
-    import.meta.env.VITE_API_URL ; 
-
-  return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
-};
+    // Fallback for local development (if any old documents exist)
+    const baseUrl = import.meta.env.VITE_API_URL; 
+    return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
+  };
 
 const renderContent = () => {
   if (loading) {
@@ -63,6 +63,11 @@ const renderContent = () => {
   }
 
   const pdfUrl = getPdfUrl();
+  
+  // Use Mozilla's PDF.js viewer - gives us full control and no unwanted popout buttons
+  const viewerUrl = pdfUrl.includes('cloudinary.com') 
+    ? `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`
+    : pdfUrl;
 
   return (
     <div className="bg-white border border-slate-300 rounded-lg overflow-hidden shadow-sm">
@@ -75,15 +80,16 @@ const renderContent = () => {
           className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
         >
           <ExternalLink size={16} />
-          Open PDF in new tab
+          Download PDF
         </a>
       </div>
       <div className="bg-gray-10 p-1">
         <iframe
-          src={pdfUrl}
+          src={viewerUrl}
           className="w-full h-[70vh] bg-white rounded border border-gray-300"
           title="PDF Viewer"
           frameBorder="0"
+          allow="fullscreen"
           style={{
             colorScheme : "light"
           }}

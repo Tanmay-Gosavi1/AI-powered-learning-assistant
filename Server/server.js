@@ -9,6 +9,8 @@ import connectDB from './config/db.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import errorHandler from './middlewares/errorHandler.js'
+import fileUpload from 'express-fileupload'
+import cloudinaryConnect from './config/cloudinary.js'
 
 import authRoutes from './routes/authRoute.js'
 import docRoutes from './routes/docRoute.js'
@@ -20,6 +22,9 @@ import insightRoutes from './routes/insightRoute.js'
 
 // Connect to Database
 connectDB()
+
+// Connect to Cloudinary
+cloudinaryConnect()
 
 // __dirname setup
 const __filename = fileURLToPath(import.meta.url)
@@ -50,16 +55,13 @@ app.use(cors(corsOptions))
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}))
 app.use(errorHandler)
 
 // Sample Route
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-  setHeaders: (res, filePath) => {
-    res.removeHeader('X-Frame-Options')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
-  }
-}))
 app.get('/', (req, res) => {
   res.send('Hello, World!')
 })
