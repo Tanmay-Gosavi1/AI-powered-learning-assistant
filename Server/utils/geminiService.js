@@ -26,29 +26,44 @@ if (!process.env.GEMINI_API_KEY) {
  * @returns {Promise<Array<{question: string, answer: string, difficulty: string}>>}
  */
 export const generateFlashcards = async (text, count = 10) => {
-  const prompt = `You are an expert educator creating study flashcards. Generate exactly ${count} high-quality flashcards based on the content provided.
+  const prompt = `You are an expert tutor creating ADVANCED study flashcards. Generate exactly ${count} flashcards based on the provided content.
 
-IMPORTANT GUIDELINES:
-- Create questions about the ACTUAL CONCEPTS, FACTS, and IDEAS in the content
-- NEVER mention "chapter", "section", "page", "document", "text", "passage", "chunk", or any structural references
-- NEVER ask questions like "What is discussed in..." or "According to the text..."
-- Use SIMPLE, CLEAR language that students can easily understand
-- Questions should test understanding of the subject matter itself
-- Answers should be direct and informative
+STRICT CONSTRAINTS — DO NOT ASK ABOUT:
+- The author, document title, institution, or publication details
+- "What is discussed in this text?" or "What does the author say?"
+- Chapter numbers, page numbers, or section headers
 
-GOOD EXAMPLE:
-Q: What is photosynthesis?
-A: The process by which plants convert sunlight, water, and carbon dioxide into glucose and oxygen.
-D: easy
+CRITICAL INSTRUCTIONS:
+- Focus on HOW, WHY, and WHEN concepts — not simple definitions
+- NEVER ask questions that can be answered with a one-line definition
+- TARGET DIFFICULTY: Medium to Hard only
+- Assume the student already knows basic terminology
+- Skip trivial or introductory concepts
+- If the content contains processes, algorithms, or workflows, ask about logic, trade-offs, or reasoning
+- Questions must be self-contained and understandable without context
+- Do NOT repeat the same concept across multiple flashcards
 
-BAD EXAMPLE (DO NOT DO THIS):
-Q: What algorithm is described in Chapter 11?
-A: The text mentions the sorting algorithm.
+QUALITY CHECK (IMPORTANT):
+- Before finalizing a question, ensure it requires explanation, reasoning, or cause-effect understanding
 
-Format each flashcard as:
-Q: (Clear question about the concept itself)
-A: (Direct, helpful answer)
-D: (Difficulty: easy, medium, or hard)
+GOOD EXAMPLES:
+Q: Why does React use a virtual DOM instead of directly updating the real DOM?
+A: The virtual DOM allows React to batch updates and compute minimal changes through diffing, reducing expensive direct DOM operations and improving performance.
+D: medium
+
+Q: How does the cleanup function in useEffect help prevent memory leaks?
+A: It runs before re-execution or unmounting, allowing subscriptions, timers, or listeners to be properly cleaned up and preventing unused resources from persisting.
+D: hard
+
+BAD EXAMPLES (DO NOT DO THIS):
+Q: What is React?
+Q: Define useEffect.
+Q: What does the text say about hooks?
+
+FORMAT EACH FLASHCARD AS:
+Q: (Deep, specific conceptual question)
+A: (Clear, explanatory answer)
+D: (medium or hard)
 
 Separate each flashcard with "---"
 
@@ -106,41 +121,40 @@ ${text.substring(0, 15000)}`;
  * @returns {Promise<Array<{question: string, options: Array, correctAnswer: string, explanation: string, difficulty: string}>>}
  */
 export const generateQuiz = async (text, numQuestions = 5) => {
-  const prompt = `You are an expert educator creating a quiz. Generate exactly ${numQuestions} multiple choice questions based on the content provided.
+  const prompt = `You are a professor creating a difficult exam. Generate exactly ${numQuestions} multiple choice questions based on the content provided.
+  
+STRICT CONSTRAINT - DO NOT ASK ABOUT:
+- The author name, document title, or institution name.
+- "What is the purpose of this document?"
+- "Structure of the text" (e.g., "What is in Chapter 1?").
+- If the text is a research paper, DO NOT ask "Who wrote this paper?" -> Ask about the *findings* of the paper.
 
-IMPORTANT GUIDELINES:
-- Create questions about the ACTUAL CONCEPTS, FACTS, and IDEAS in the content
-- NEVER mention "chapter", "section", "page", "document", "text", "passage", "chunk", or any structural references
-- NEVER ask questions like "According to the text..." or "What does the author mention..."
-- Use SIMPLE, CLEAR language that students can easily understand
-- Questions should test real understanding of the subject matter
-- All 4 options should be plausible but only one correct
-- Explanations should teach WHY the answer is correct
+CRITICAL INSTRUCTIONS:
+- Create SCENARIO-BASED or APPLICATION questions.
+- Avoid simple "What is X?" questions. Instead, ask "Given situation X, what happens?" or "Which of the following best handles case Y?"
+- FOCUS: nuance, edge cases, and distinguishing between similar concepts.
+- The wrong options (distractors) must be plausible to a student who only has surface-level knowledge.
+- NEVER mention "chapter", "text", or "document".
 
-GOOD EXAMPLE:
-Q: What is the primary function of mitochondria in a cell?
-O1: Produce energy (ATP)
-O2: Store genetic information
-O3: Break down waste products
-O4: Control cell division
-C: Produce energy (ATP)
-E: Mitochondria are known as the powerhouse of the cell because they generate ATP through cellular respiration.
-D: medium
-
-BAD EXAMPLE (DO NOT DO THIS):
-Q: What concept is explained in the first section?
-O1: The chapter discusses algorithms
-...
+GOOD EXAMPLE (Application):
+Q: A developer needs to update a state variable based on its previous value in React. Which approach ensures the update is accurate during batched re-renders?
+O1: setState(state + 1)
+O2: setState((prev) => prev + 1)
+O3: setState(this.state.value + 1)
+O4: forceUpdate()
+C: setState((prev) => prev + 1)
+E: Using the functional form ensures you are working with the most up-to-date state, avoiding race conditions in batched updates.
+D: hard
 
 Format each question as:
-Q: (Clear question about the concept itself)
+Q: (Scenario or conceptual question)
 O1: (Option 1)
 O2: (Option 2)
 O3: (Option 3)
 O4: (Option 4)
 C: (Correct option - exactly as written above)
-E: (Brief explanation of why this is correct)
-D: (Difficulty: easy, medium, or hard)
+E: (Explanation of the logic)
+D: (Difficulty: medium or hard)
 
 Separate questions with "---"
 

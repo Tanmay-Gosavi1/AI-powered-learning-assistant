@@ -341,7 +341,7 @@ const DashboardPage = () => {
                   <p className='text-xs text-slate-500'>Your latest learning sessions</p>
                 </div>
               </div>
-              <button className='text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1'>
+              <button onClick={()=>navigate('/documents')} className='text-xs cursor-pointer font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1'>
                 View All <ChevronRight className='w-4 h-4' />
               </button>
             </div>
