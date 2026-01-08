@@ -19,6 +19,7 @@ import aiRoutes from './routes/aiRoute.js'
 import quizRoutes from './routes/quizRoute.js'
 import progressRoutes from './routes/progressRoutes.js'
 import insightRoutes from './routes/insightRoute.js'
+import healthRoute from './routes/health.js'
 
 // Connect to Database
 connectDB()
@@ -67,6 +68,7 @@ app.get('/', (req, res) => {
 })
 
 // Routes
+app.use('/', healthRoute)
 app.use('/api/auth', authRoutes)
 app.use('/api/docs', docRoutes)
 app.use('/api/flashcards', FlashcardRoutes)
