@@ -226,9 +226,11 @@ const FlashcardsListPage = () => {
                   className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-6 bg-linear-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl"
                   style={{ backfaceVisibility: 'hidden' }}
                 >
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Question</span>
-                  <p className="text-center text-lg font-semibold text-slate-800 leading-relaxed">{currentCard.question}</p>
-                  <div className="flex items-center gap-2 mt-6 text-slate-400 text-sm">
+                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Question</span>
+                  <div className='overflow-y-auto'>
+                     <p className="text-center text-lg font-semibold text-slate-800 leading-relaxed">{currentCard.question}</p>
+                  </div>
+                  <div className="flex items-center gap-1 mt-2 text-slate-400 text-sm">
                     <RotateCcw className="w-4 h-4" strokeWidth={2} />
                     <span>Tap to flip</span>
                   </div>
@@ -236,12 +238,14 @@ const FlashcardsListPage = () => {
 
                 {/* Back - Answer */}
                 <div
-                  className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-6 bg-linear-to-br from-amber-500 to-orange-600 border-2 border-amber-400 rounded-2xl"
+                  className="absolute inset-0 w-full h-full flex flex-col justify-center items-center p-6 bg-linear-to-br from-amber-500 to-orange-600 border-2 border-amber-400 rounded-2xl"
                   style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
-                  <span className="text-xs font-semibold text-white/70 uppercase tracking-wider mb-4">Answer</span>
-                  <p className="text-center text-lg font-semibold text-white leading-relaxed">{currentCard.answer}</p>
-                  <div className="flex items-center gap-2 mt-6 text-white/70 text-sm">
+                  <span className="text-xs font-semibold text-white/70 uppercase tracking-wider mb-2">Answer</span>
+                  <div className='relative overflow-y-auto'>
+                    <p className="text-center text-lg font-semibold text-white leading-relaxed flex-wrap">{currentCard.answer}</p>
+                  </div>
+                  <div className="flex items-center gap-1 mt-2 text-white/70 text-sm">
                     <RotateCcw className="w-4 h-4" strokeWidth={2} />
                     <span>Tap to flip</span>
                   </div>

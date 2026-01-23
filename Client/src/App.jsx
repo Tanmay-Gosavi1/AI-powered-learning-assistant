@@ -14,6 +14,7 @@ import Spinner from './components/common/Spinner.jsx'
 import Landing from './pages/landing/Landing.jsx'
 import FlashcardPage from './pages/FlashCards/FlashcardPage.jsx'
 import FlashcardsListPage from './pages/FlashCards/FlashcardListPage.jsx'
+import ChatInterface from './components/chat/ChatInterface.jsx'
 
 const App = () => {
   const { loading} = useAuth();
@@ -34,13 +35,14 @@ const App = () => {
           <Route path='/profile' element={<Profile />} />
           <Route path='/documents' element={<DocumentsListPage />} />
           <Route path='/documents/:id' element={<DocumentDetailPage />} />
+          <Route path='/documents/:id/chat' element={<ChatInterface />} />
           <Route path='/flashcards' element={<FlashcardsListPage />} />
           <Route path='/documents/:id/flashcards' element={<FlashcardPage />} />
           <Route path='/quizzes/:quizId' element={<QuizTakePage />} />
           <Route path='/quizzes/:quizId/results' element={<QuizResultPage />} />
         </Route>
 
-        <Route path='*' element={<Navigate to="/" replace />} />
+        {/* <Route path='*' element={<Navigate to="/" replace />} /> */}
       </Routes>
     </BrowserRouter>
   )

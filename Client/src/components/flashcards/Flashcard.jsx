@@ -83,7 +83,7 @@ const Flashcard = forwardRef(({ flashcard, onToggleStar, onFlip }, ref) => {
           </div>
 
           {/* Question */}
-          <div className='relative flex-1 flex items-center justify-center px-2 py-4'>
+          <div className='relative flex-1 flex px-2 py-4 overflow-y-auto'>
             <div className='text-center'>
               <Sparkles className='w-5 h-5 text-blue-400/60 mx-auto mb-3' />
               <p className='text-lg font-semibold text-slate-800 leading-relaxed tracking-tight'>
@@ -137,7 +137,7 @@ const Flashcard = forwardRef(({ flashcard, onToggleStar, onFlip }, ref) => {
           </div>
 
           {/* Answer */}
-          <div className='relative flex-1 flex items-center justify-center px-2 py-4'>
+          <div className='relative flex-1 flex px-2 py-4 overflow-y-auto'>
             <div className='text-center'>
               <div className='w-8 h-1 bg-linear-to-r from-blue-400 to-purple-400 rounded-full mx-auto mb-4' />
               <p className='text-lg font-semibold text-white leading-relaxed tracking-tight'>

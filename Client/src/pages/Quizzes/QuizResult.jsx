@@ -1,16 +1,17 @@
-
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Trophy, ChevronLeft, CheckCircle2, XCircle, Info } from 'lucide-react'
+import { Trophy, ChevronLeft, CheckCircle2, XCircle, Info, Reply } from 'lucide-react'
 import quizService from '../../service/quizService'
 import PageHeader from '../../components/common/PageHeader'
 import Spinner from '../../components/common/Spinner'
 import Button from '../../components/common/Button'
 import toast from 'react-hot-toast'
+import { useChat } from '../../context/ChatContext.jsx'
 
 const QuizResult = () => {
   const { quizId } = useParams()
   const navigate = useNavigate()
+  const {sendMessage} = useChat();
 
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -46,6 +47,14 @@ const QuizResult = () => {
     const docId = data?.quiz?.document?._id || data?.quiz?.document
     if (docId) return navigate(`/documents/${docId}`)
     return navigate('/dashboard')
+  }
+
+  const handleAskAI = (question , options) => {
+    sendMessage(`I have just completed my quiz titled "${data?.quiz?.title || 'the quiz'}". 
+But I faced a problem in these question : ${question} and these are its options : ${options} , can you help me to understand it better in easy words?`)
+
+    const docId = data?.quiz?.document?._id || data?.quiz?.document
+    if (docId) return navigate(`/documents/${docId}/chat`)
   }
 
   if (loading)
@@ -134,7 +143,8 @@ const QuizResult = () => {
                     Question {idx + 1}
                   </span>
                 </div>
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                <div className='flex justify-center items-center gap-2'>
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
                   wasCorrect
                     ? 'bg-green-50 text-green-700 border-green-200'
                     : 'bg-rose-50 text-rose-700 border-rose-200'
@@ -145,6 +155,11 @@ const QuizResult = () => {
                     <XCircle className="w-4 h-4" strokeWidth={2.5} />
                   )}
                   {wasCorrect ? 'Correct' : 'Incorrect'}
+                  </div>
+                  <div onClick={()=>handleAskAI(item.question , item.options)} className='px-2 py-1 flex items-center justify-center space-x-1 border border-purple-500/60 bg-linear-to-r from-purple-100 to-purple-100 rounded-lg text-purple-950 hover:scale-105 transition-all duration-200 cursor-pointer'>
+                    <Reply className='w-4 h-4  cursor-pointer' strokeWidth={2.5} />
+                    <p className='text-sm font-semibold'>Ask AI</p>
+                  </div>
                 </div>
               </div>
 

@@ -108,7 +108,7 @@ const DashboardLayout = ({children , activeMenu}) => {
 
         {/* Company Logo */}
          <div className='flex items-center px-6 border-b border-gray-200/70 h-16'>
-            <Link to="/" className='flex items-center space-x-3'>
+            <Link to="/" className='flex items-center space-x-3 outline-none'>
                 <div className='w-8 h-8 bg-linear-to-br from-blue-900 to-blue-700 rounded-lg flex justify-center items-center shadow-lg shadow-primary-25'>
                   <BrainCircuit className='h-5 w-5 text-white '/>
                 </div>

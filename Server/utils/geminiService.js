@@ -26,48 +26,45 @@ if (!process.env.GEMINI_API_KEY) {
  * @returns {Promise<Array<{question: string, answer: string, difficulty: string}>>}
  */
 export const generateFlashcards = async (text, count = 10) => {
-  const prompt = `You are an expert tutor creating ADVANCED study flashcards. Generate exactly ${count} flashcards based on the provided content.
+  const prompt = `You are an experienced teacher creating STUDENT-FRIENDLY study flashcards.
+Generate exactly ${count} flashcards based on the provided content.
 
-STRICT CONSTRAINTS — DO NOT ASK ABOUT:
-- The author, document title, institution, or publication details
-- "What is discussed in this text?" or "What does the author say?"
-- Chapter numbers, page numbers, or section headers
+STRICTLY AVOID:
+- Author, document title, institution, or publication details
+- Questions about structure (chapters, pages, sections)
+- "What does the text say?" type questions
+- Big Questions in length
 
-CRITICAL INSTRUCTIONS:
-- Focus on HOW, WHY, and WHEN concepts — not simple definitions
-- NEVER ask questions that can be answered with a one-line definition
-- TARGET DIFFICULTY: Medium to Hard only
-- Assume the student already knows basic terminology
-- Skip trivial or introductory concepts
-- If the content contains processes, algorithms, or workflows, ask about logic, trade-offs, or reasoning
-- Questions must be self-contained and understandable without context
-- Do NOT repeat the same concept across multiple flashcards
+CORE GOAL:
+Help a student UNDERSTAND and REMEMBER the material for exams.
 
-QUALITY CHECK (IMPORTANT):
-- Before finalizing a question, ensure it requires explanation, reasoning, or cause-effect understanding
+QUESTION DESIGN RULES:
+- Prefer WHY, HOW, and WHEN questions — but only for concepts clearly emphasized in the content
+- Avoid extreme edge cases or obscure details
+- Questions should feel like:
+  "This is something my teacher or exam might ask"
+- Do NOT assume expert-level prior knowledge
+- Avoid one-line definition questions, but basic concepts may still be tested conceptually
+- If a concept is mentioned briefly, do NOT over-extrapolate it
+- Keep questions focused on the MAIN ideas, not side notes
 
-GOOD EXAMPLES:
-Q: Why does React use a virtual DOM instead of directly updating the real DOM?
-A: The virtual DOM allows React to batch updates and compute minimal changes through diffing, reducing expensive direct DOM operations and improving performance.
-D: medium
+DIFFICULTY GUIDELINE:
+- Mostly medium
+- Some slightly challenging
+- Avoid very hard or trick questions
 
-Q: How does the cleanup function in useEffect help prevent memory leaks?
-A: It runs before re-execution or unmounting, allowing subscriptions, timers, or listeners to be properly cleaned up and preventing unused resources from persisting.
-D: hard
+QUALITY CHECK:
+- Would this question help an average student revise effectively?
+- If not, discard it and choose a clearer concept
 
-BAD EXAMPLES (DO NOT DO THIS):
-Q: What is React?
-Q: Define useEffect.
-Q: What does the text say about hooks?
-
-FORMAT EACH FLASHCARD AS:
-Q: (Deep, specific conceptual question)
-A: (Clear, explanatory answer)
+FORMAT:
+Q: (Clear, exam-relevant conceptual question)
+A: (Student-friendly explanation)
 D: (medium or hard)
 
 Separate each flashcard with "---"
 
-Content to learn from:
+CONTENT:
 ${text.substring(0, 15000)}`;
 
   try {
@@ -121,44 +118,46 @@ ${text.substring(0, 15000)}`;
  * @returns {Promise<Array<{question: string, options: Array, correctAnswer: string, explanation: string, difficulty: string}>>}
  */
 export const generateQuiz = async (text, numQuestions = 5) => {
-  const prompt = `You are a professor creating a difficult exam. Generate exactly ${numQuestions} multiple choice questions based on the content provided.
-  
-STRICT CONSTRAINT - DO NOT ASK ABOUT:
-- The author name, document title, or institution name.
-- "What is the purpose of this document?"
-- "Structure of the text" (e.g., "What is in Chapter 1?").
-- If the text is a research paper, DO NOT ask "Who wrote this paper?" -> Ask about the *findings* of the paper.
+  const prompt = `You are a teacher creating PRACTICE quiz questions for students.
+Generate exactly ${numQuestions} multiple-choice questions based on the content.
 
-CRITICAL INSTRUCTIONS:
-- Create SCENARIO-BASED or APPLICATION questions.
-- Avoid simple "What is X?" questions. Instead, ask "Given situation X, what happens?" or "Which of the following best handles case Y?"
-- FOCUS: nuance, edge cases, and distinguishing between similar concepts.
-- The wrong options (distractors) must be plausible to a student who only has surface-level knowledge.
-- NEVER mention "chapter", "text", or "document".
+STRICTLY AVOID:
+- Author or document metadata
+- Structure-based questions
+- Trick questions or misleading wording
+- Big Questions in length
 
-GOOD EXAMPLE (Application):
-Q: A developer needs to update a state variable based on its previous value in React. Which approach ensures the update is accurate during batched re-renders?
-O1: setState(state + 1)
-O2: setState((prev) => prev + 1)
-O3: setState(this.state.value + 1)
-O4: forceUpdate()
-C: setState((prev) => prev + 1)
-E: Using the functional form ensures you are working with the most up-to-date state, avoiding race conditions in batched updates.
-D: hard
+QUIZ DESIGN GOAL:
+Test whether a student truly understands the concept — not to confuse them.
 
-Format each question as:
-Q: (Scenario or conceptual question)
-O1: (Option 1)
-O2: (Option 2)
-O3: (Option 3)
-O4: (Option 4)
-C: (Correct option - exactly as written above)
-E: (Explanation of the logic)
-D: (Difficulty: medium or hard)
+QUESTION STYLE:
+- Prefer application or reasoning questions ONLY for concepts clearly explained in the content
+- Simple scenarios are okay, but avoid rare edge cases
+- If a concept is basic, test it with understanding, not memorization
+- Distractors should represent COMMON student mistakes (not obscure technicalities)
+
+DIFFICULTY:
+- Mostly medium
+- Some slightly challenging
+- Avoid "professor-level" or research-style questions
+
+GOOD QUESTION CHECK:
+- Could a well-prepared student reasonably solve this?
+- Would this help them learn if they get it wrong?
+
+FORMAT:
+Q: (Clear, student-level application or conceptual question)
+O1: ...
+O2: ...
+O3: ...
+O4: ...
+C: (Correct option)
+E: (Clear explanation, teaching-oriented)
+D: (medium or hard)
 
 Separate questions with "---"
 
-Content to create quiz from:
+CONTENT:
   ${text.substring(0, 15000)}`;
 
   try {

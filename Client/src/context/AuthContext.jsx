@@ -22,6 +22,7 @@ export const AuthProvider = ({children}) => {
 
     const checkAuthStatus = async () => {
       try {
+        setLoading(true)
         const token = localStorage.getItem('token')
         const userStr = localStorage.getItem('user')
         if(token && userStr){

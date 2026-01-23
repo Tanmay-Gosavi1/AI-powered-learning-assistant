@@ -1,12 +1,13 @@
 import React , {useState , useEffect , useRef} from 'react'
 import {Send  , MessageSquare , Sparkles, BookOpen, Globe, Info, Trash2} from "lucide-react";
-import { useParams } from 'react-router-dom';
+import { useParams , useLocation } from 'react-router-dom';
 import aiService from '../../service/aiService';
 import Spinner from '../common/Spinner';
 import Modal from '../common/Modal';
 import toast from 'react-hot-toast';
 import {useAuth } from '../../context/AuthContext';
 import MarkdownRenderer from '../common/MarkdownRenderer';
+import { useChat } from '../../context/ChatContext.jsx';
 
 const ChatInterface = () => {
     const {id : documentId} = useParams();
@@ -20,6 +21,18 @@ const ChatInterface = () => {
     const [clearing, setClearing] = useState(false);
     const [showClearModal, setShowClearModal] = useState(false);
     const messagesEndRef = useRef(null);
+    const location = useLocation();
+    const isChatRoute = location.pathname.includes("/chat");
+    const {msg , setMsg } = useChat();
+
+    useEffect(() => {
+        if(msg && msg.content){
+            setMessage(msg.content);
+            setMsg(null);
+            
+        }
+    }, [msg]);
+
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -105,10 +118,10 @@ const ChatInterface = () => {
             <div key={index} className={`flex items-start gap-3 my-4 ${isUser ? 'justify-end' : ''}`}>
                 {!isUser && (
                     <div className='w-9 hidden sm:flex h-9 rounded-lg bg-linear-to-br from-blue-500 to-blue-400 items-center justify-center shrink-0 shadow-lg shadow-primary-25'>
-                        <Sparkles className='w-4 h-4 text-white' strokeWidth={2}/>
+                        <Sparkles className='w-4 h-4 text-white' strokeWidth={2.5}/>
                     </div>
                 )}
-                <div className={`max-w-[85%] sm:max-w-lg p-1 sm:p-4 rounded-2xl sm:shadow-sm
+                <div className={`max-w-[95%] sm:max-w-2xl p-1 sm:p-4 rounded-2xl sm:shadow-sm
                     ${isUser ? 'bg-linear-to-r from-blue-500 p-2 to-blue-400 text-white rounded-br-md' : 'bg-white sm:border sm:border-slate-200/60 text-slate-800 rounded-bl-md'}
                     `}>
                         {isUser ? (
@@ -143,9 +156,9 @@ const ChatInterface = () => {
 
 
   return (
-    <div className='flex flex-col h-[70vh] bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden max-w-full'>
+    <div className={`flex relative flex-col ${isChatRoute ? 'h-[90vh]' : 'h-[72vh]'} bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden max-w-full`}>
         {/* Messages Area */}
-        <div className='flex-1 p-4 sm:p-6 overflow-y-auto overflow-x-hidden bg-linear-to-br from-slate-50/50 via-white/50 to-slate-50/50'>
+        <div className='flex-1 p-4 sm:p-6 overflow-y-auto overflow-x-hidden bg-linear-to-br from-slate-50/50 via-white/50 to-slate-50/50 mb-23'>
             {history.length === 0 ? (
                 <div className='flex flex-col items-center justify-center h-full text-center'>
                     <div className='w-16 h-16 rounded-2xl bg-linear-to-br from-blue-100 to-blue-50 flex items-center justify-center mb-4 shadow-lg shadow-primary-25'>
@@ -177,7 +190,7 @@ const ChatInterface = () => {
         </div>
 
         {/* Input Area with Mode Toggle */}
-        <div className='border-t border-slate-200/60 bg-white/90'>
+        <div className='absolute bottom-0 left-0 right-0 border-t border-slate-200/60 bg-white/90'>
             {/* Mode Toggle Row */}
             <div className='px-3 sm:px-4 pt-3 pb-2 flex flex-wrap items-center gap-2'>
                 <div className='flex items-center gap-1.5 bg-slate-200 p-1 rounded-full'>
