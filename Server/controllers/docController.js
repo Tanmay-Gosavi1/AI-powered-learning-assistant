@@ -49,7 +49,7 @@ export const uploadDoc = async (req, res, next) => {
       });
     }
 
-    // 🔥 Save temp path BEFORE upload deletes it
+    // Keep the temporary file path before upload cleanup removes it.
     const tempPath = file.tempFilePath;
 
     // Upload to Cloudinary (raw)
@@ -67,7 +67,7 @@ export const uploadDoc = async (req, res, next) => {
       status: "processing"
     });
 
-    // Process PDF asynchronously using saved temp path
+    // Process the PDF after upload using the saved temp path.
     processPDF(doc._id, tempPath).catch((err) => {
       console.error("Error processing PDF:", err);
     });
@@ -84,7 +84,7 @@ export const uploadDoc = async (req, res, next) => {
 };
 
 
-// Helper function
+// Process a PDF document after upload.
 const processPDF = async (docId , filePath) => {
     try {
         const {text} = await extractTextFromPDF(filePath);
@@ -180,19 +180,14 @@ export const deleteDoc = async (req, res, next) => {
             return res.status(404).json({success : false , error : "Document not found", statusCode: 404})
         }
 
-        // Delete from Cloudinary
+        // Remove the document from Cloudinary if possible.
         try {
-            // Extract public_id from Cloudinary URL
-            // Example: https://res.cloudinary.com/xxx/raw/upload/fl_attachment:false/v123456/folder/filename.pdf
+            // Extract the public ID from the Cloudinary URL.
             const urlParts = doc.filePath.split('/upload/');
             if (urlParts.length > 1) {
-                // Get everything after upload/ and remove any transformation flags
                 let pathAfterUpload = urlParts[1];
-                // Remove flags like fl_attachment:false/
                 pathAfterUpload = pathAfterUpload.replace(/^fl_[^/]+\//, '');
-                // Remove version
                 pathAfterUpload = pathAfterUpload.replace(/^v\d+\//, '');
-                // Remove .pdf extension for public_id
                 const publicId = pathAfterUpload.replace(/\.[^.]+$/, '');
                 
                 await cloudinary.uploader.destroy(publicId, { 
@@ -203,7 +198,7 @@ export const deleteDoc = async (req, res, next) => {
             }
         } catch (cloudinaryError) {
             console.error('Error deleting from Cloudinary:', cloudinaryError);
-            // Continue with document deletion even if Cloudinary delete fails
+            // Continue deleting the document record even if Cloudinary cleanup fails.
         }
 
         await doc.deleteOne();

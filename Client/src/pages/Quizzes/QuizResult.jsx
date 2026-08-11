@@ -118,7 +118,6 @@ But I faced a problem in these question : ${question} and these are its options 
         </div>
       </div>
 
-      {/* Detailed Review */}
       <div className="mb-3 flex items-center gap-2">
         <div className="w-5 h-5 rounded-md bg-blue-100 border border-blue-200 flex items-center justify-center">
           <Info className="w-3.5 h-3.5 text-blue-700" strokeWidth={2.5} />

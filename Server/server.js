@@ -53,7 +53,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
+app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(fileUpload({
@@ -82,6 +82,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on ${process.env.API_URL}`)
 })
 
+// Global error handling for uncaught exceptions and unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err.message)
   process.exit(1)

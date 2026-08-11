@@ -36,9 +36,9 @@ export const submitQuiz = async (req, res, next) => {
             return res.status(404).json({ success: false, error: "Quiz not found", statusCode: 404 });
         }
 
-        // Allow re-submission to support retakes by overwriting prior attempt
+        // Allow resubmission so users can retake the quiz.
 
-        // Normalize incoming answers
+        // Normalize incoming answers.
         let normalized = [];
         if (Array.isArray(answers)) {
             normalized = answers.map(a => ({
@@ -84,7 +84,7 @@ export const submitQuiz = async (req, res, next) => {
         quiz.completedAt = new Date();
         await quiz.save();
 
-        // Update study streak when user completes a quiz
+        // Update the study streak after quiz completion.
         await updateStudyStreak(req.user.id);
 
         return res.status(200).json({

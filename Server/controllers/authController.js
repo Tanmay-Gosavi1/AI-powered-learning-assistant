@@ -35,6 +35,7 @@ export const login = async (req, res) => {
             token
         })
     } catch (error) {
+        console.log(error)
         return res.status(500).json({success : false, message : "Error while logging in", error : error.message});
     }
 }

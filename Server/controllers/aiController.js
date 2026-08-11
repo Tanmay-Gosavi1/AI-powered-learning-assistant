@@ -17,7 +17,7 @@ export const generateFlashcards = async (req, res, next) => {
         if(!document) {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
         }
-        // Generate flashcards using Gemini
+        // Generate flashcards with Gemini.
         const cards = await geminiService.generateFlashcards(
         document.extractedText,
         parseInt(count)
@@ -75,7 +75,7 @@ export const generateQuiz = async (req, res, next) => {
             parseInt(numQuestions)
         );
 
-        // Save to database
+        // Store the quiz in the database.
         const quiz = await Quiz.create({
             userId: req.user.id,
             documentId: document._id,
@@ -138,7 +138,7 @@ export const chat = async (req, res, next) => {
         const relevantChunks = findReleventChunks(document.chunks, question , 3);
         const chunkIndices = relevantChunks.map(c => c.chunkIndex);
 
-        // Find existing chat history or create new one
+        // Reuse existing chat history or create a new one.
         let chatHistory = await ChatHistory.findOne({
             userId: req.user.id,
             documentId: document._id

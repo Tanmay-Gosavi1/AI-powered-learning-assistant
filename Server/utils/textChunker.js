@@ -1,5 +1,4 @@
-// Spilit text into chunks for beeter ai responces
-
+// Split text into smaller chunks for easier processing.
 
 export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
     if(!text || text.trim().length === 0){
@@ -55,7 +54,7 @@ export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
                 pageNumber : 0
             })
             
-            // Create overlap
+            // Add overlap between chunks.
             const prevChunkText = currentChunk.join(' ')
             const prevWords = prevChunkText.split(/\s+/)
             const overlapText = prevWords.slice(-Math.min(overlap , prevWords.length)).join(' ')
@@ -78,7 +77,7 @@ export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
         })
     }
 
-    // Fallback : if no chunks created , split by words
+    // Fall back to word-based splitting if no chunks were created.
     if(chunks.length === 0 && cleanedText.length > 0){
         const allWords = cleanedText.split(/\s+/)
         for(let i = 0 ; i < allWords.length ; i += (chunkSize - overlap)){
@@ -96,7 +95,7 @@ export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
     return chunks;
 }
 
-// Find Relevent Chunks based on keywords matching
+// Find relevant chunks based on keyword matches.
 export const findReleventChunks = (chunks , query , maxChunks = 3) => {
     if(!query || !chunks){
         return []
@@ -141,7 +140,7 @@ export const findReleventChunks = (chunks , query , maxChunks = 3) => {
             score += Math.max(0, partialMatches - exactMatches) * 1.5;
         }
 
-        // 2️⃣ Bonus: Multiple query words found
+        // Give extra weight when several query words are found.
         const uniqueWordsFound = queryWords.filter(word =>
             content.includes(word)
         ).length;
@@ -150,16 +149,16 @@ export const findReleventChunks = (chunks , query , maxChunks = 3) => {
             score += uniqueWordsFound * 2;
         }
 
-        // 3️⃣ Normalize by content length
+        // Normalize the score by content length.
         const normalizedScore = score / Math.sqrt(contentWords);
 
-        // 4️⃣ Small bonus for earlier chunks
+        // Give a small boost to earlier chunks.
         const positionBonus = 1 - (index / chunks.length) * 0.1;
 
-        // 5️⃣ Final score
+        // Combine the values into a final score.
         const finalScore = normalizedScore * positionBonus;
 
-        // 6️⃣ Return clean object (no DB metadata)
+        // Return a clean object without database metadata.
         return {
             content: chunk.content,
             chunkIndex: chunk.chunkIndex,

@@ -96,7 +96,6 @@ const FlashcardsListPage = () => {
           </div>
         </div>
 
-        {/* Starred Cards Container */}
         <div className="relative overflow-hidden rounded-2xl border border-amber-200/60 bg-linear-to-br from-amber-50/80 via-orange-50/50 to-yellow-50/80 backdrop-blur-sm shadow-lg shadow-amber-100/50">
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-40 h-40 bg-linear-to-br from-amber-200/30 to-orange-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />

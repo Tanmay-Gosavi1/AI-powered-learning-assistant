@@ -29,7 +29,7 @@ const FlashcardManager = ({documentId}) => {
             const sets = Array.isArray(payload) ? payload : (payload ? [payload] : []);
             setFlashcardSets(sets);
         } catch (error) {
-            // If no sets remain (404), clear local state so UI updates
+            // Clear the local state if no flashcard sets remain.
             setFlashcardSets([]);
             setSelectedSet(null);
             console.error(error);
@@ -66,7 +66,7 @@ const FlashcardManager = ({documentId}) => {
 
     const handleNextCard = () => {
         if(selectedSet){
-            // Reset flip state for next card
+            // Reset the card state before moving to the next one.
             if(flashcardRef.current){
                 flashcardRef.current.resetFlip()
             }
@@ -76,7 +76,7 @@ const FlashcardManager = ({documentId}) => {
 
     const handlePrevCard = () => {
         if(selectedSet){
-            // Reset flip state for next card
+            // Reset the card state before moving to the previous one.
             if(flashcardRef.current){
                 flashcardRef.current.resetFlip()
             }
@@ -119,10 +119,10 @@ const FlashcardManager = ({documentId}) => {
             toast.success("Flashcard set deleted successfully.");
             setIsDeleteModalOpen(false);
             setSetToDelete(null);
-            // Optimistically update UI
+            // Update the UI immediately.
             setFlashcardSets(prev => (Array.isArray(prev) ? prev.filter(s => s._id !== setToDelete._id) : []));
             setSelectedSet(prev => (prev && prev._id === setToDelete._id ? null : prev));
-            // Re-fetch to ensure server truth
+            // Refresh the list from the server.
             fetchFlashcardSets();
         } catch (error) {
             toast.error("Failed to delete flashcard set.");

@@ -1,4 +1,5 @@
 import React , {createContext , useContext , useState , useEffect } from 'react'
+import axiosInstance from '../utils/axiosInstance'    
 
 const AuthContext = createContext()
 
@@ -21,13 +22,17 @@ export const AuthProvider = ({children}) => {
     }, [])
 
     const checkAuthStatus = async () => {
+      const token = localStorage.getItem('token')
+      if(!token){
+        setLoading(false)
+        return
+      }
       try {
         setLoading(true)
-        const token = localStorage.getItem('token')
-        const userStr = localStorage.getItem('user')
-        if(token && userStr){
-          const userData = JSON.parse(userStr)
-          setUser(userData)
+        const res = await axiosInstance.get('/api/auth/profile')
+
+        if(res.data.success){
+          setUser(res.data.data.user)
           setIsAuthenticated(true)
         }
       }

@@ -3,21 +3,21 @@ import Flashcard from '../models/Flashcard.js';
 import Quiz from '../models/Quiz.js';
 import User from '../models/User.js';
 
-// Helper function to check if two dates are on the same day
+// Check whether two dates fall on the same day.
 const isSameDay = (date1, date2) => {
   return date1.getFullYear() === date2.getFullYear() &&
          date1.getMonth() === date2.getMonth() &&
          date1.getDate() === date2.getDate();
 };
 
-// Helper function to check if date1 is exactly one day before date2
+// Check whether one date is the day before the other.
 const isYesterday = (date1, date2) => {
   const yesterday = new Date(date2);
   yesterday.setDate(yesterday.getDate() - 1);
   return isSameDay(date1, yesterday);
 };
 
-// Function to calculate and update study streak
+// Calculate and update the user's study streak.
 const calculateStudyStreak = async (userId) => {
   const user = await User.findById(userId);
   if (!user) return 0;
@@ -47,7 +47,7 @@ const calculateStudyStreak = async (userId) => {
   }
 };
 
-// Function to update streak when user studies
+// Update the streak when a user studies.
 export const updateStudyStreak = async (userId) => {
   const user = await User.findById(userId);
   if (!user) return;

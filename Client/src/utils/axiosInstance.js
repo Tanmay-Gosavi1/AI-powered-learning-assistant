@@ -31,7 +31,11 @@ axiosInstance.interceptors.response.use(
     },
     (error)=>{
         if(error.response){
-            if(error.response.status === 500){
+            if(error.response.status === 401){
+                console.log("Unauthorized . Please login again.")
+                localStorage.clear();
+            }
+            else if(error.response.status === 500){
                 console.log("Server error . Please try again later.")
             }
             else if(error.code === "ECONNABORTED" ){

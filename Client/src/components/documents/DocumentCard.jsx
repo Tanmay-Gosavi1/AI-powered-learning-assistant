@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FileText, Trash2, BookOpen, BrainCircuit, Clock } from "lucide-react";
 import moment from "moment";
 
-// Helper function to format file size
+// Format a file size for display.
 const formatFileSize = (bytes) => {
   if (bytes === undefined || bytes === null) return "N/A";
 

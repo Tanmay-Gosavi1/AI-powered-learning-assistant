@@ -48,7 +48,7 @@ const DocumentDetailPage = () => {
       return filePath;
     }
 
-    // Fallback for local development (if any old documents exist)
+    // Fall back to the local API URL for older document entries.
     const baseUrl = import.meta.env.VITE_API_URL; 
     return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
   };
