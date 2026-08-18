@@ -53,7 +53,11 @@ const docSchema = new mongoose.Schema({
             type : Number,
             required : true
         }
-    }]
+    }],
+    chunkCount : {
+        type : Number,
+        default : 0
+    }
 
 },{ timestamps : true })
 

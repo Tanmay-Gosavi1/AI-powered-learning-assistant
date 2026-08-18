@@ -16,7 +16,8 @@ This project combines four major ideas:
    - The text is split into smaller chunks for retrieval.
 
 2. Retrieval-based AI assistance
-   - When a user asks a question, the app finds the most relevant chunks from the uploaded document.
+   - When a user asks a question, the app generates an embedding vector for the question.
+   - It searches MongoDB Atlas Vector Search for the most semantically relevant chunks from the uploaded document.
    - Those chunks are sent to Gemini with the question.
    - This makes the answer grounded in the user’s own notes instead of a generic AI response.
 
@@ -227,14 +228,53 @@ The chunkText utility:
 
 ### How retrieval works
 
-When the user asks a question, the app uses findReleventChunks:
+When the user asks a question, the app uses semantic vector retrieval:
 
-- removes common stop words
-- scores chunks based on keyword overlap
-- ranks the most relevant chunks
-- sends only the top few chunks to Gemini
+- Generates an embedding for the user's question using Gemini `gemini-embedding-2`.
+- Performs a `$vectorSearch` in MongoDB Atlas against the `DocumentChunk` collection, filtering by the specific `documentId`.
+- Filters out chunks below a configured similarity threshold (e.g., `0.65`).
+- Sends the top most relevant chunks to Gemini.
 
-This makes the chat experience more grounded and efficient.
+This is a significant improvement over simple keyword matching. For example, if a user asks "How do plants transform sunlight into energy?", semantic search can find a chunk that says "Photosynthesis converts light energy into chemical energy," even though the exact keywords don't match.
+
+### Setting up MongoDB Atlas Vector Search
+
+To use semantic retrieval, you must create a Vector Search Index on your MongoDB Atlas cluster.
+Vector Search is available on the free M0 tier.
+
+**Steps to create the index:**
+1. Log in to your MongoDB Atlas dashboard.
+2. Go to **Database** > your cluster > **Browse Collections**.
+3. Select the `documentchunks` collection.
+4. Click the **Search Indexes** tab, then **Create Search Index**.
+5. Choose **JSON Editor** (or **Atlas Vector Search**).
+6. Give the index the name: `vector_index`
+7. Paste the following configuration:
+```json
+{
+  "fields": [
+    {
+      "type": "vector",
+      "path": "embedding",
+      "numDimensions": 768,
+      "similarity": "cosine"
+    },
+    {
+      "type": "filter",
+      "path": "documentId"
+    }
+  ]
+}
+```
+8. Click **Next** and **Create Search Index**.
+9. Wait a few minutes for the index to build.
+
+### Migrating Existing Documents
+
+If you have documents uploaded before the RAG upgrade, run the migration script to generate embeddings for them:
+```bash
+node scripts/migrateEmbeddings.js
+```
 
 ---
 

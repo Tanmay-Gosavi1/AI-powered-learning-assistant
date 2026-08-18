@@ -1,10 +1,13 @@
 import Document from '../models/Document.js';
+import DocumentChunk from '../models/DocumentChunk.js';
 import Flashcard from '../models/Flashcard.js';
 import Quiz from '../models/Quiz.js';
 
 import {extractTextFromPDF} from '../utils/pdfParser.js';
 import {chunkText} from '../utils/textChunker.js';
+import { generateEmbeddings } from '../utils/embeddingService.js';
 import uploadToCloudinary from '../utils/imageUpload.js';
+import { RAG_CONFIG } from '../config/ragConfig.js';
 import mongoose from 'mongoose';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs/promises';
@@ -68,7 +71,7 @@ export const uploadDoc = async (req, res, next) => {
     });
 
     // Process the PDF after upload using the saved temp path.
-    processPDF(doc._id, tempPath).catch((err) => {
+    processPDF(doc._id, doc.userId, tempPath).catch((err) => {
       console.error("Error processing PDF:", err);
     });
 
@@ -85,22 +88,71 @@ export const uploadDoc = async (req, res, next) => {
 
 
 // Process a PDF document after upload.
-const processPDF = async (docId , filePath) => {
+// Now generates embeddings and stores chunks in the DocumentChunk collection.
+const processPDF = async (docId, userId, filePath) => {
     try {
         const {text} = await extractTextFromPDF(filePath);
-        const chunks = chunkText(text , 500 , 50);
 
-        await Document.findByIdAndUpdate(docId , 
-            {
-                extractedText : text,
-                chunks : chunks,
-                status : 'ready'
-            }
-        )
-        console.log(`Document ${docId} processed successfully.`);
+        if (!text || text.trim().length === 0) {
+            console.error(`Document ${docId}: No text extracted from PDF`);
+            await Document.findByIdAndUpdate(docId, { status: 'failed' });
+            return;
+        }
+
+        const chunks = chunkText(text, RAG_CONFIG.CHUNK_SIZE, RAG_CONFIG.CHUNK_OVERLAP);
+
+        if (chunks.length === 0) {
+            console.error(`Document ${docId}: No chunks produced from extracted text`);
+            await Document.findByIdAndUpdate(docId, { status: 'failed' });
+            return;
+        }
+
+        console.log(`[Processing] Document ${docId}: ${chunks.length} chunks created, generating embeddings...`);
+
+        // Generate embeddings for all chunks in batches
+        const chunkTexts = chunks.map(c => c.content);
+        let embeddings;
+        try {
+            embeddings = await generateEmbeddings(chunkTexts);
+        } catch (embeddingError) {
+            console.error(`Document ${docId}: Embedding generation failed:`, embeddingError.message);
+            await Document.findByIdAndUpdate(docId, { status: 'failed' });
+            return;
+        }
+
+        if (embeddings.length !== chunks.length) {
+            console.error(`Document ${docId}: Embedding count mismatch (${embeddings.length} vs ${chunks.length} chunks)`);
+            await Document.findByIdAndUpdate(docId, { status: 'failed' });
+            return;
+        }
+
+        // Build DocumentChunk records
+        const chunkRecords = chunks.map((chunk, i) => ({
+            documentId: docId,
+            userId: userId,
+            content: chunk.content,
+            chunkIndex: chunk.chunkIndex,
+            pageNumber: chunk.pageNumber,
+            wordCount: chunk.content.split(/\s+/).length,
+            embedding: embeddings[i],
+        }));
+
+        // Insert all chunks into the DocumentChunk collection
+        await DocumentChunk.insertMany(chunkRecords);
+
+        // Update the document — keep extractedText (used by flashcards/quizzes/summaries),
+        // store the old chunks array for backward compatibility, and record the chunk count
+        await Document.findByIdAndUpdate(docId, {
+            extractedText: text,
+            chunks: chunks, // Keep for backward compat / fallback
+            chunkCount: chunks.length,
+            status: 'ready'
+        });
+
+        console.log(`[Processing] Document ${docId} processed successfully: ${chunks.length} chunks with embeddings stored.`);
     } catch (error) {
-        console.error(`Error processing document ${docId} : ` , error);
-        await Document.findByIdAndUpdate(docId , {status : 'failed'});
+        console.error(`Error processing document ${docId}:`, error);
+        await Document.findByIdAndUpdate(docId, { status: 'failed' });
     }
 }
 
@@ -200,6 +252,10 @@ export const deleteDoc = async (req, res, next) => {
             console.error('Error deleting from Cloudinary:', cloudinaryError);
             // Continue deleting the document record even if Cloudinary cleanup fails.
         }
+
+        // Delete associated DocumentChunk records
+        const deleteResult = await DocumentChunk.deleteMany({ documentId: doc._id });
+        console.log(`Deleted ${deleteResult.deletedCount} chunks for document ${doc._id}`);
 
         await doc.deleteOne();
 

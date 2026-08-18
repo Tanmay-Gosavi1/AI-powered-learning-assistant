@@ -1,15 +1,14 @@
 // Split text into smaller chunks for easier processing.
 
-export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
+export const chunkText = (text , chunkSize = 500 , overlap = 75) => {
     if(!text || text.trim().length === 0){
         return []
     }
 
     const cleanedText = text
         .replace(/\r\n/g , '\n')
-        .replace(/\s+/g , ' ')
+        .replace(/[ \t]+/g , ' ')
         .replace(/\n /g , '\n')
-        .replace(/\n/g , '\n')
         .trim();
 
     const paragraphs = cleanedText.split(/\n+/).filter(p => p.trim().length > 0)
@@ -95,7 +94,8 @@ export const chunkText = (text , chunkSize = 500 , overlap = 50) => {
     return chunks;
 }
 
-// Find relevant chunks based on keyword matches.
+// Legacy keyword fallback intentionally disabled for vector-only testing.
+/*
 export const findReleventChunks = (chunks , query , maxChunks = 3) => {
     if(!query || !chunks){
         return []
@@ -183,3 +183,4 @@ export const findReleventChunks = (chunks , query , maxChunks = 3) => {
     })
     .slice(0 , maxChunks)
 }
+*/

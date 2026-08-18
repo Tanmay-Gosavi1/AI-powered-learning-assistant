@@ -28,12 +28,6 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps: true });    
 
-// const comparePassword = function(enteredPassword) {
-//     return enteredPassword === this.password;
-// }
-
-// userSchema.methods.comparePassword = comparePassword;
-
 const User = mongoose.model('User', userSchema);
 
 export default User;
