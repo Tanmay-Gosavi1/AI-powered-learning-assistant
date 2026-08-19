@@ -7,11 +7,11 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // Model configuration for different tasks
 const MODELS = {
-  CHAT: 'gemini-2.5-flash-lite',      // For Chat / Q&A
-  FLASHCARDS: 'gemini-2.5-flash',           // For Flashcards generation
-  QUIZ: 'gemini-2.5-flash',                 // For Quiz generation
-  SUMMARY: 'gemini-2.5-flash',              // For Summary generation
-  EXPLAIN: 'gemini-2.5-flash-lite',   // For Concept explanation
+  CHAT: 'gemini-3.6-flash',      // For Chat / Q&A
+  FLASHCARDS: 'gemini-3.7-flash',           // For Flashcards generation
+  QUIZ: 'gemini-3.7-flash',                 // For Quiz generation
+  SUMMARY: 'gemini-3.5-flash',              // For Summary generation
+  EXPLAIN: 'gemini-3.6-flash',   // For Concept explanation
 };
 
 if (!process.env.GEMINI_API_KEY) {
