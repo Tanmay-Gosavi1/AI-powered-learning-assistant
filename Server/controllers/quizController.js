@@ -1,6 +1,22 @@
 import Quiz from '../models/Quiz.js';
 import { updateStudyStreak } from './progressController.js';
 
+const resolveOptionText = (question, answer) => {
+    if (!question?.options || answer === null || answer === undefined) return undefined;
+
+    if (typeof answer === 'number' && Number.isInteger(answer)) {
+        return question.options[answer];
+    }
+
+    const normalizedAnswer = String(answer).trim();
+    const optionIndexMatch = normalizedAnswer.match(/^(?:option|o)?\s*([1-4])$/i);
+    if (optionIndexMatch) {
+        return question.options[Number(optionIndexMatch[1]) - 1];
+    }
+
+    return question.options.find(option => option.trim() === normalizedAnswer) || normalizedAnswer;
+};
+
 export const getQuizzes = async (req, res, next) => {
     try {
         const quizzes = await Quiz.find({ documentId : req.params.documentId , userId : req.user.id })
@@ -43,16 +59,17 @@ export const submitQuiz = async (req, res, next) => {
         if (Array.isArray(answers)) {
             normalized = answers.map(a => ({
                 questionIndex: a.questionIndex,
-                // Accept either string option or index under selectedAnswer
-                selectedOption: typeof a.selectedAnswer === 'number'
-                    ? (quiz.questions[a.questionIndex]?.options?.[a.selectedAnswer])
-                    : (a.selectedOption ?? a.selectedAnswer)
+                selectedOption: resolveOptionText(
+                    quiz.questions[a.questionIndex],
+                    a.selectedOption ?? a.selectedAnswer
+                )
             }));
         } else if (answers && typeof answers === 'object') {
-            // Accept object map of questionId -> optionIndex
             normalized = Object.entries(answers).map(([questionId, optIndex]) => {
                 const idx = quiz.questions.findIndex(q => q._id.toString() === String(questionId));
-                const selectedOption = idx >= 0 ? quiz.questions[idx]?.options?.[optIndex] : undefined;
+                const selectedOption = idx >= 0
+                    ? resolveOptionText(quiz.questions[idx], optIndex)
+                    : undefined;
                 return { questionIndex: idx, selectedOption };
             });
         }
@@ -67,7 +84,8 @@ export const submitQuiz = async (req, res, next) => {
         normalized.forEach(({ questionIndex, selectedOption }) => {
             if (typeof questionIndex === 'number' && questionIndex >= 0 && questionIndex < quiz.questions.length) {
                 const question = quiz.questions[questionIndex];
-                const isCorrect = selectedOption === question.correctAnswer;
+                const correctAnswer = resolveOptionText(question, question.correctAnswer);
+                const isCorrect = selectedOption === correctAnswer;
                 if (isCorrect) correctCount++;
                 userAnswers.push({
                     questionId: questionIndex,
@@ -116,17 +134,23 @@ export const getQuizResults = async (req, res, next) => {
 
         const detailedResults = quiz.questions.map((question, index) => {
             const userAnswer = quiz.userAnswers.find(ans => ans.questionId === index);
-            const selectedOption = userAnswer?.selectedOption ?? null;
+            const correctAnswer = resolveOptionText(question, question.correctAnswer);
+            const selectedOption = userAnswer
+                ? resolveOptionText(question, userAnswer.selectedOption)
+                : null;
             return {
                 question: question.question,
                 questionIndex: index,
                 options: question.options,
-                correctAnswer: question.correctAnswer,
+                correctAnswer,
                 selectedOption,
-                isCorrect: userAnswer?.isCorrect || false,
+                isCorrect: selectedOption !== null && selectedOption === correctAnswer,
                 explanation: question.explanation,
             }
         });
+
+        const correctCount = detailedResults.filter(result => result.isCorrect).length;
+        const score = Math.round((correctCount / Math.max(quiz.totalQuestions, 1)) * 100);
 
         return res.status(200).json({success : true , 
             data : {
@@ -134,7 +158,7 @@ export const getQuizResults = async (req, res, next) => {
                     id : quiz._id ,
                     title : quiz.title ,
                     document : quiz.documentId ,
-                    score : quiz.score ,
+                    score,
                     totalQuestions : quiz.totalQuestions ,
                     completedAt : quiz.completedAt
                 },
