@@ -10,14 +10,14 @@ import { getEducationalContent, getEducationalContentBatches } from '../utils/ch
 import * as geminiService from '../utils/geminiService.js';
 
 /**
- * Get chunk-based educational content for a document.
- * Uses DocumentChunk collection if available, falls back to extractedText.
+
  *
  * @param {string} documentId
  * @param {number} maxChars - Character budget
+ * @param {string} [fallbackText] - Optional in-memory extractedText to avoid extra query
  * @returns {Promise<string>} - Filtered educational text
  */
-const getDocumentContent = async (documentId, maxChars = 15000) => {
+const getDocumentContent = async (documentId, maxChars = 15000, fallbackText = null) => {
     const chunks = await DocumentChunk.find({ documentId })
         .select('content chunkIndex')
         .sort({ chunkIndex: 1 })
@@ -27,14 +27,17 @@ const getDocumentContent = async (documentId, maxChars = 15000) => {
         return getEducationalContent(chunks, maxChars);
     }
 
+    if (fallbackText !== null && fallbackText !== undefined && fallbackText.length > 0) {
+        return fallbackText.substring(0, maxChars);
+    }
+
     // Fallback for old documents without DocumentChunk records
     const doc = await Document.findById(documentId).select('extractedText').lean();
     return doc?.extractedText?.substring(0, maxChars) || '';
 };
 
 /**
- * Get chunk-based educational content in batches for a document.
- * Used for thorough generation across the whole document.
+
  *
  * @param {string} documentId
  * @param {number} batchCharSize
@@ -69,8 +72,11 @@ export const generateFlashcards = async (req, res, next) => {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
         }
 
-        // Use chunk-based educational content instead of raw extractedText
-        // Process in batches to cover the whole document, not just the first 15k chars
+        /*
+        // =========================================================================
+        // MULTI-BATCH GENERATION (Commented out: Causes high latency 25-30s+ due to multiple sequential LLM calls)
+        // Kept intact for future async/background worker processing if needed.
+        // =========================================================================
         const batches = await getDocumentContentBatches(documentId, 12000);
         const cardsPerBatch = batches.length > 1
             ? Math.ceil(parseInt(count) / batches.length)
@@ -94,8 +100,23 @@ export const generateFlashcards = async (req, res, next) => {
         if (allCards.length === 0) {
             return res.status(500).json({success: false, error: "Failed to generate flashcards from document content", statusCode: 500});
         }
+        // =========================================================================
+        */
 
-        const mapped = allCards.map(card => ({
+        // FAST SINGLE-PASS TECHNIQUE: Extract first 15k chars of filtered educational content
+        const contentText = (await getDocumentContent(documentId, 15000, document.extractedText)) || document.extractedText || '';
+
+        if (!contentText || contentText.trim().length === 0) {
+            return res.status(500).json({success: false, error: "No content available to generate flashcards", statusCode: 500});
+        }
+
+        const cards = await geminiService.generateFlashcards(contentText, parseInt(count));
+
+        if (!cards || cards.length === 0) {
+            return res.status(500).json({success: false, error: "Failed to generate flashcards from document content", statusCode: 500});
+        }
+
+        const mapped = cards.map(card => ({
             question: card.question,
             answer: card.answer,
             difficulty: card.difficulty,
@@ -142,7 +163,11 @@ export const generateQuiz = async (req, res, next) => {
             return res.status(404).json({success: false, error: "Document not found or not processed yet", statusCode: 404});
         }
 
-        // Use chunk-based educational content in batches
+        /*
+        // =========================================================================
+        // MULTI-BATCH GENERATION (Commented out: Causes high latency 25-30s+ due to multiple sequential LLM calls)
+        // Kept intact for future async/background worker processing if needed.
+        // =========================================================================
         const batches = await getDocumentContentBatches(documentId, 12000);
         const questionsPerBatch = batches.length > 1
             ? Math.ceil(parseInt(numQuestions) / batches.length)
@@ -164,14 +189,29 @@ export const generateQuiz = async (req, res, next) => {
         if (allQuestions.length === 0) {
             return res.status(500).json({success: false, error: "Failed to generate quiz from document content", statusCode: 500});
         }
+        // =========================================================================
+        */
+
+        // FAST SINGLE-PASS TECHNIQUE: Extract first 15k chars of filtered educational content
+        const contentText = (await getDocumentContent(documentId, 15000, document.extractedText)) || document.extractedText || '';
+
+        if (!contentText || contentText.trim().length === 0) {
+            return res.status(500).json({success: false, error: "No content available to generate quiz", statusCode: 500});
+        }
+
+        const questions = await geminiService.generateQuiz(contentText, parseInt(numQuestions));
+
+        if (!questions || questions.length === 0) {
+            return res.status(500).json({success: false, error: "Failed to generate quiz from document content", statusCode: 500});
+        }
 
         // Store the quiz in the database.
         const quiz = await Quiz.create({
             userId: req.user.id,
             documentId: document._id,
             title: title || `${document.title} - Quiz`,
-            questions: allQuestions,
-            totalQuestions: allQuestions.length,
+            questions: questions,
+            totalQuestions: questions.length,
             userAnswers: [],
             score: 0
         });
@@ -201,7 +241,7 @@ export const generateSummary = async (req, res, next) => {
         }
 
         // Use chunk-based educational content (single concatenated text)
-        const educationalText = await getDocumentContent(documentId, 20000);
+        const educationalText = (await getDocumentContent(documentId, 20000, document.extractedText)) || document.extractedText || '';
 
         if (!educationalText || educationalText.trim().length === 0) {
             return res.status(500).json({success: false, error: "No content available for summary", statusCode: 500});
@@ -320,9 +360,7 @@ export const explainConcept = async (req, res, next) => {
                 query: concept,
             });
         } else {
-            // Legacy keyword fallback intentionally disabled for vector-only testing.
-            // console.log('[RAG] Falling back to keyword-based retrieval for explainConcept');
-            // relevantChunks = findReleventChunks(document.chunks, concept, 3);
+
             console.log('[RAG] No vector chunks found; keyword fallback disabled for vector-only mode');
         }
 

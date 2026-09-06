@@ -54,8 +54,6 @@ const isBoilerplate = (content) => {
 };
 
 /**
- * Filter chunks to prioritize educational content.
- * Returns the text from non-boilerplate chunks, concatenated and
  * truncated to fit within the token/character budget.
  *
  * @param {Array<{content: string, chunkIndex: number}>} chunks - Ordered chunks
@@ -101,9 +99,6 @@ export const getEducationalContent = (chunks, maxChars = 15000) => {
 };
 
 /**
- * Get educational content from chunks, split into batches.
- * Useful when you want to process sections of a long document
- * separately (e.g., generate flashcards from different parts).
  *
  * @param {Array<{content: string, chunkIndex: number}>} chunks - Ordered chunks
  * @param {number} batchCharSize - Target chars per batch (default: 10000)
