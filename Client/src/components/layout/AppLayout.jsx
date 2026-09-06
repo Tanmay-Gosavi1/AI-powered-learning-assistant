@@ -140,7 +140,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/20 font-bold uppercase">Pro</span>
                 </div>
                 <p className="text-[11px] text-slate-300 mb-2.5">
-                  Unlimited vector RAG retrieval and instant multi-document quiz mode.
+                  Unlimited vector RAG retrieval and instant document quiz mode.
                 </p>
                 <button
                   onClick={() => navigate('/documents')}
@@ -207,15 +207,6 @@ const DashboardLayout = ({ children, activeMenu }) => {
               />
             </div>
 
-            {/* Notification Bell */}
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-              title="Notifications"
-            >
-              <Bell className="w-4.5 h-4.5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600" />
-            </button>
 
             {/* Profile Dropdown */}
             <ProfileDropdown

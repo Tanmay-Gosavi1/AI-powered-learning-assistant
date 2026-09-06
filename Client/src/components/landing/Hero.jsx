@@ -74,7 +74,6 @@ const Hero = () => {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl font-bold text-white bg-linear-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
                 <span>Get Started Free</span>
-                <Sparkles className="w-5 h-5 text-blue-200" />
               </Link>
             )}
 
@@ -82,7 +81,6 @@ const Hero = () => {
               href="#workflow"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-semibold text-slate-200 bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
-              <Play className="w-4 h-4 fill-current text-slate-300" />
               <span>See How It Works</span>
             </a>
           </div>
@@ -218,7 +216,7 @@ const Hero = () => {
                     <div className="bg-white p-3.5 rounded-xl border border-slate-200/70 shadow-2xs flex items-center justify-between">
                       <div>
                         <span className="text-[11px] font-semibold text-slate-500">Flashcards Mastered</span>
-                        <div className="text-xl font-bold text-slate-900 mt-0.5">850 Cards</div>
+                        <div className="text-xl font-bold text-slate-900 mt-0.5">45 Cards</div>
                         <span className="text-[10px] text-amber-600 font-medium">★ 92% retention rate</span>
                       </div>
                       <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
@@ -229,8 +227,8 @@ const Hero = () => {
                     <div className="bg-white p-3.5 rounded-xl border border-slate-200/70 shadow-2xs flex items-center justify-between">
                       <div>
                         <span className="text-[11px] font-semibold text-slate-500">Quiz Accuracy</span>
-                        <div className="text-xl font-bold text-slate-900 mt-0.5">94% Avg</div>
-                        <span className="text-[10px] text-emerald-600 font-medium">Top 5% student rank</span>
+                        <div className="text-xl font-bold text-slate-900 mt-0.5">74% Avg</div>
+                        <span className="text-[10px] text-emerald-600 font-medium">Top 1% student rank</span>
                       </div>
                       <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
                         <Star className="w-5 h-5" />

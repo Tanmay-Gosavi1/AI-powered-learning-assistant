@@ -7,8 +7,9 @@ const Testinomials = () => {
         <div className='max-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             {/* Text */}
             <div className='max-w-6xl mx-auto mb-16'>
-                <h1 className='text-3xl sm:text-5xl font-extrabold text-center mb-4 text-blue-950 capitalize'>What our customers say?</h1>
-                <p className='text-center text-lg sm:text-xl text-gray-700'>We are trusted by thousands of small bussinesses</p>
+                <h1 className='text-3xl sm:text-5xl font-extrabold text-center mb-4 text-blue-950 capitalize'>Loved by ambitious students worldwide
+</h1>
+                <p className='text-center text-lg sm:text-xl text-gray-700'>Real learners preparing for university midterms, GATE, MBA, and competitive exams.</p>
             </div>
 
             {/* cards */}
