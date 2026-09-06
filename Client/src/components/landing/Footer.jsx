@@ -39,13 +39,13 @@ const Footer = () => {
                     <h1 className='text-base mb-4 font-semibold'>Products</h1>
                     <ul className='space-y-2'>
                         <li>
-                            <FooterLink href="#features">Features</FooterLink>
+                            <FooterLink>Features</FooterLink>
                         </li>
                         <li>
-                            <FooterLink href="#testimonials">Testimonials</FooterLink>
+                            <FooterLink>Testimonials</FooterLink>
                         </li>
                         <li>
-                            <FooterLink href="#faqs">FAQs</FooterLink>
+                            <FooterLink>FAQs</FooterLink>
                         </li>
                     </ul>
                 </div>
@@ -54,10 +54,10 @@ const Footer = () => {
                     <h1 className='text-base mb-4 font-semibold'>Company</h1>
                     <ul className='space-y-2'>
                         <li>
-                            <FooterLink to='/about'>About Us </FooterLink>
+                            <FooterLink>About Us </FooterLink>
                         </li>
                         <li>
-                            <FooterLink to='/contact' >Contact</FooterLink>
+                            <FooterLink>Contact</FooterLink>
                         </li>
                     </ul>
                 </div>
@@ -66,10 +66,10 @@ const Footer = () => {
                     <h1 className='text-base mb-4 font-semibold'>Legal</h1>
                     <ul className='space-y-2'>
                         <li>
-                            <FooterLink to='/privacy'>Privacy Policy</FooterLink>
+                            <FooterLink>Privacy Policy</FooterLink>
                         </li>
                         <li>
-                            <FooterLink to='/terms'>Terms of Service</FooterLink>
+                            <FooterLink>Terms of Service</FooterLink>
                         </li>
                     </ul>
                 </div>
@@ -79,13 +79,13 @@ const Footer = () => {
                 <div className='flex flex-col md:flex-row justify-between items-center'>
                     <p className='text-gray-400 text-sm'>&copy; 2024 PrepMate. All rights reserved.</p>
                     <div className='flex space-x-4 mt-4 md:mt-0'>
-                        <SocialLink href='#'>
+                        <SocialLink>
                             <Twitter className='w-5 h-5'/>
                         </SocialLink>
-                        <SocialLink href='#'>
+                        <SocialLink >
                             <Linkedin className='w-5 h-5'/>
                         </SocialLink>
-                        <SocialLink href='#'>
+                        <SocialLink>
                             <Github className='w-5 h-5'/>
                         </SocialLink>
                     </div>

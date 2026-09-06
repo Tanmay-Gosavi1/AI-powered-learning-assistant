@@ -6,7 +6,7 @@ const ProfileDropdown = ({ isOpen, onToggle, avatar, companyName, email, onLogou
     const navigate = useNavigate();
   return <>
     <div className="relative">
-        <button className="flex items-center space-x-3 p-2 hover:cursor-pointer bg-gray-50 rounded-lg" onClick={onToggle}>
+        <button className="flex items-center space-x-3 p-2 hover:cursor-pointer bg-[#0a0f1c] rounded-lg" onClick={onToggle}>
             {avatar 
                 ?  
                     (<img src={avatar} alt="Avatar" className="w-8 h-8 rounded-full object-cover"/> ) 
@@ -16,8 +16,8 @@ const ProfileDropdown = ({ isOpen, onToggle, avatar, companyName, email, onLogou
                     </div>)
             }
             <div className="hidden sm:block text-left">
-                <p className="text-sm font-semibold capitalize">{companyName}</p>
-                <p className="text-xs text-gray-700">{email}</p>
+                <p className="text-sm font-semibold capitalize text-white">{companyName}</p>
+                <p className="text-xs text-white/50">{email}</p>
             </div>
             <ChevronDown className="w-4 h-4 text-gray-600"/>
         </button>
